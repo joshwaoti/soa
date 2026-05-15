@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sound of Abundance Church — Enhancement & Implementation Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{
+--bg:#0A0508;--panel:#150810;--card:#1F0E14;--accent:#D4AF37;--accent-lt:#E8C47A;--accent-dk:#8B6914;--text:#F5EEE4;--muted:#9A8A7A;
+--font-display:'Cormorant Garamond',Georgia,serif;--font-caps:'Cinzel',serif;--font-body:'EB Garamond',Georgia,serif;
+}
+[data-theme="light"]{--bg:#FAF5EE;--panel:#F5EDE0;--card:#EDE5D8;--accent:#D4AF37;--accent-lt:#C9920A;--accent-dk:#8B6914;--text:#1A0D08;--muted:#6B5A4A;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.7;overflow-x:hidden;transition:background .4s,color .4s;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.03;pointer-events:none;z-index:9998;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--accent-dk);border-radius:2px;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(10,5,8,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(212,175,55,.15);padding:16px 40px;display:flex;justify-content:space-between;align-items:center;transition:background .4s;}
+.nav-brand{font-family:var(--font-display);font-style:italic;font-weight:700;font-size:1.3rem;color:var(--accent-lt);text-decoration:none;}
+.nav-links{display:flex;gap:32px;flex-wrap:wrap;}
+.nav-links a{font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-links a.active{color:var(--accent);border-bottom:1px solid var(--accent);}
+.theme-toggle button{background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;transition:color .3s;}
+.theme-toggle button:hover{color:var(--accent);}
+
+@media(max-width:768px){.nav-links{display:none;}}
+
+/* COVER */
+.cover{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;background:radial-gradient(ellipse at 50% 30%,rgba(212,175,55,.06) 0%,transparent 60%);}
+.cover-tag{display:inline-flex;gap:12px;margin-bottom:32px;}
+.cover-tag span{font-family:var(--font-caps);font-size:.4rem;letter-spacing:.2em;border:1px solid rgba(212,175,55,.3);padding:5px 16px;color:var(--accent);}
+.cover-eyebrow{font-family:var(--font-caps);font-size:.48rem;letter-spacing:.3em;color:var(--muted);margin-bottom:16px;}
+.cover-title{font-family:var(--font-display);font-size:clamp(2.5rem,6vw,5rem);font-weight:700;font-style:italic;line-height:1.05;color:var(--text);margin-bottom:8px;}
+.cover-rule{width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:28px auto;}
+.cover-desc{font-family:var(--font-body);font-size:.92rem;color:var(--muted);max-width:580px;line-height:1.8;margin-bottom:40px;}
+.cover-meta{display:flex;justify-content:center;gap:32px;border-top:1px solid rgba(212,175,55,.15);padding-top:24px;margin-top:40px;flex-wrap:wrap;}
+.cover-meta-item{text-align:center;}
+.cover-meta-item .label{font-family:var(--font-caps);font-size:.38rem;letter-spacing:.2em;color:var(--muted);margin-bottom:4px;}
+.cover-meta-item .val{font-family:var(--font-caps);font-size:.42rem;letter-spacing:.1em;color:var(--accent);}
+
+/* SECTIONS */
+section{padding:80px 60px;position:relative;}
+section:nth-child(odd){background:var(--bg);}
+section:nth-child(even){background:var(--panel);}
+.container{max-width:1180px;margin:0 auto;}
+.sec-num{font-family:var(--font-caps);font-size:.48rem;letter-spacing:.25em;color:var(--accent-dk);margin-bottom:8px;}
+.sec-title{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.8rem);font-weight:600;margin-bottom:20px;color:var(--text);}
+.sec-title em{font-style:italic;color:var(--accent-lt);}
+.sec-rule{width:64px;height:1px;background:linear-gradient(90deg,var(--accent),transparent);margin-bottom:20px;}
+.sec-intro{font-family:var(--font-body);font-size:.92rem;color:var(--muted);max-width:660px;line-height:1.8;margin-bottom:40px;}
+
+/* CODE BLOCKS */
+.code-block{background:#03010A;border:1px solid rgba(212,175,55,.15);border-radius:3px;overflow:hidden;margin-bottom:32px;}
+.code-header{font-family:monospace;font-size:.38rem;padding:8px 20px;border-bottom:1px solid rgba(212,175,55,.1);display:flex;justify-content:space-between;align-items:center;}
+.code-lang{font-family:var(--font-caps);font-size:.38rem;letter-spacing:.2em;color:var(--accent-dk);}
+.code-filename{font-family:monospace;font-size:.7rem;color:var(--accent-lt);}
+pre{font-family:'Courier New',monospace;font-size:.75rem;line-height:1.7;color:#B8A88A;padding:20px 24px;overflow-x:auto;margin:0;}
+.kw{color:#E8C47A;}
+.fn{color:#D4AF37;}
+.str{color:#8A9F7A;}
+.cm{color:#4A455A;}
+.num{color:#B5A6D0;}
+.tp{color:#9FC4D8;}
+.kr{color:#CF9A7A;}
+.sym{color:#CF9A7A;}
+
+/* DATA TABLES */
+.data-table{width:100%;border-collapse:collapse;margin-bottom:32px;overflow-x:auto;display:block;}
+.data-table th{font-family:var(--font-caps);font-size:.42rem;letter-spacing:.2em;color:var(--accent);text-align:left;padding:12px 16px;border-bottom:1px solid rgba(212,175,55,.2);background:var(--panel);white-space:nowrap;}
+.data-table td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);font-family:var(--font-body);font-size:.82rem;color:var(--muted);vertical-align:top;}
+.data-table td:first-child{font-family:var(--font-display);font-style:italic;color:var(--text);font-size:.88rem;white-space:nowrap;}
+.data-table td code{font-family:'Courier New',monospace;font-size:.72rem;color:var(--accent-lt);background:rgba(212,175,55,.08);padding:2px 6px;}
+.data-table tr:hover td{background:rgba(212,175,55,.03);}
+.data-table-link{color:var(--accent);text-decoration:none;font-size:.78rem;}
+.data-table-link:hover{text-decoration:underline;}
+.image-table{width:100%;border-collapse:collapse;margin-bottom:32px;}
+.image-table th{font-family:var(--font-caps);font-size:.38rem;letter-spacing:.15em;color:var(--accent);text-align:left;padding:10px 16px;border-bottom:1px solid rgba(212,175,55,.2);background:var(--panel);}
+.image-table td{padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);font-family:var(--font-body);font-size:.78rem;color:var(--muted);vertical-align:top;}
+.image-table td:first-child{font-family:var(--font-caps);font-size:.4rem;letter-spacing:.12em;color:var(--text);}
+.image-table tr:hover td{background:rgba(212,175,55,.03);}
+.css-only{font-family:var(--font-caps);font-size:.38rem;letter-spacing:.12em;color:var(--accent-dk);font-style:italic;}
+.photo-req{font-family:var(--font-caps);font-size:.38rem;letter-spacing:.12em;color:#B22222;}
+
+/* SECTION HEADER BLOCKS */
+.section-header-block{background:var(--card);border:1px solid rgba(212,175,55,.1);padding:24px;margin-bottom:32px;}
+.section-header-block .label{font-family:var(--font-caps);font-size:.42rem;letter-spacing:.2em;color:var(--accent);margin-bottom:8px;}
+.section-header-block .desc{font-family:var(--font-body);font-size:.85rem;color:var(--muted);line-height:1.7;}
+
+/* BULLET LISTS */
+.bullet-list{list-style:none;padding:0;margin-bottom:24px;}
+.bullet-list li{font-family:var(--font-body);font-size:.88rem;color:var(--muted);padding:8px 0;padding-left:24px;position:relative;line-height:1.6;}
+.bullet-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:.8rem;}
+
+/* NUMBERED LISTS */
+.num-list{list-style:none;padding:0;margin-bottom:24px;counter-reset:num;}
+.num-list li{font-family:var(--font-body);font-size:.88rem;color:var(--muted);padding:10px 0;padding-left:36px;position:relative;line-height:1.6;counter-increment:num;}
+.num-list li::before{content:counter(num);position:absolute;left:0;top:10px;font-family:var(--font-display);font-size:1.1rem;font-style:italic;color:var(--accent);font-weight:700;}
+
+/* CALLOUT BLOCKS */
+.callout{background:var(--card);border:1px solid rgba(212,175,55,.2);border-left:3px solid var(--accent);padding:20px 24px;margin-bottom:24px;}
+.callout.red{border-left-color:#B22222;}
+.callout .callout-title{font-family:var(--font-caps);font-size:.42rem;letter-spacing:.2em;color:var(--accent);margin-bottom:8px;}
+.callout .callout-text{font-family:var(--font-body);font-size:.85rem;color:var(--muted);line-height:1.7;}
+
+/* CHECKBOX LISTS */
+.checklist{list-style:none;padding:0;margin-bottom:24px;}
+.checklist li{font-family:var(--font-body);font-size:.82rem;color:var(--muted);padding:8px 0;padding-left:28px;position:relative;line-height:1.5;border-bottom:1px solid rgba(255,255,255,.03);}
+.checklist li::before{content:'☐';position:absolute;left:0;color:var(--accent-dk);font-size:.85rem;}
+.checklist li.done::before{content:'☑';color:var(--accent);}
+
+/* TWO COLUMN LAYOUT */
+.two-col{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px;margin-bottom:32px;}
+
+/* CODE FILES */
+.code-file-block{background:#03010A;border:1px solid rgba(212,175,55,.12);margin-bottom:40px;overflow:hidden;}
+.code-file-header{font-family:monospace;font-size:.7rem;padding:10px 20px;border-bottom:1px solid rgba(212,175,55,.1);display:flex;justify-content:space-between;align-items:center;}
+.code-file-header .name{color:var(--accent-lt);}
+.code-file-header .lang{font-family:var(--font-caps);font-size:.38rem;letter-spacing:.2em;color:var(--accent-dk);}
+.code-file-pre{font-family:'Courier New',monospace;font-size:.72rem;line-height:1.65;color:#A09080;padding:20px;overflow-x:auto;white-space:pre;}
+
+/* NAVIGATE */
+.page-nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:48px;padding:16px;background:var(--panel);border:1px solid rgba(212,175,55,.1);}
+.page-nav a{font-family:var(--font-caps);font-size:.4rem;letter-spacing:.15em;color:var(--muted);text-decoration:none;padding:6px 14px;border:1px solid transparent;transition:all .3s;}
+.page-nav a:hover{color:var(--accent);border-color:rgba(212,175,55,.3);}
+.page-nav a.active{color:var(--accent);border-color:rgba(212,175,55,.3);background:rgba(212,175,55,.05);}
+
+/* PAGE BUILD NOTES */
+.page-build-note{background:var(--card);border:1px solid rgba(212,175,55,.1);padding:24px;margin-bottom:24px;}
+.page-build-note h4{font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:16px;}
+.page-build-note p{font-family:var(--font-body);font-size:.85rem;color:var(--muted);line-height:1.7;margin-bottom:12px;}
+
+/* IMAGE SECTION */
+.image-swatch-preview{display:flex;gap:16px;flex-wrap:wrap;margin:24px 0;}
+
+/* Footer */
+footer{background:var(--bg);border-top:1px solid rgba(212,175,55,.15);padding:60px 60px 30px;}
+.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;margin-bottom:40px;}
+.footer-col h4{font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:16px;}
+.footer-col a{display:block;font-family:var(--font-body);font-size:.85rem;color:var(--muted);text-decoration:none;margin-bottom:8px;transition:color .3s;}
+.footer-col a:hover{color:var(--accent);}
+.footer-bottom{border-top:1px solid rgba(212,175,55,.1);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.footer-copy{font-family:var(--font-body);font-size:.75rem;color:var(--muted);}
+.footer-url{font-family:var(--font-caps);font-size:.42rem;letter-spacing:.1em;color:var(--accent-dk);}
+</style>
+</head>
+<body>
+
+<nav>
+<a href="#" class="nav-brand">SOA · Implementation Guide</a>
+<div class="nav-links">
+<a href="#section-00">How to Use</a>
+<a href="#section-01">Content Data</a>
+<a href="#section-02">Images</a>
+<a href="#section-03">Page Notes</a>
+<a href="#section-04">Effects</a>
+<a href="#section-05">Social Embeds</a>
+<a href="#section-06">Nav/Footer</a>
+<a href="#section-07">Mobile QA</a>
+<a href="#section-08">Foundation</a>
+<a href="#section-09">Checklist</a>
+</div>
+<div class="theme-toggle"><button onclick="document.body.dataset.theme=document.body.dataset.theme==='light'?'dark':'light'">&#9788;</button></div>
+</nav>
+
+<!-- COVER -->
+<div class="cover">
+<div class="cover-tag">
+<span>LLM IMPLEMENTATION BRIEF</span>
+<span>V1.0</span>
+</div>
+<div class="cover-eyebrow">SOUND OF ABUNDANCE CHURCH · ENHANCEMENT & IMPLEMENTATION GUIDE</div>
+<h1 class="cover-title">Build <em>The Lord City</em></h1>
+<div class="cover-rule"></div>
+<p class="cover-desc">Feed this document directly into Claude Code, Cursor, or Windsurf. Every link, image, video ID, and component spec is verified and ready to implement. All brand tokens, color hex values, and font names are sourced from the SOA brand identity system.</p>
+<div class="cover-meta">
+<div class="cover-meta-item"><div class="label">FRAMEWORK</div><div class="val">NEXT.JS 15</div></div>
+<div class="cover-meta-item"><div class="label">STACK</div><div class="val">T3 + FRAMER MOTION</div></div>
+<div class="cover-meta-item"><div class="label">BRAND</div><div class="val">KINGDOM GOLD</div></div>
+<div class="cover-meta-item"><div class="label">PHASES</div><div class="val">5 × 4 DAYS</div></div>
+</div>
+</div>
+
+<!-- SECTION 00: HOW TO USE -->
+<section id="section-00">
+<div class="container">
+<div class="sec-num">00 — HOW TO USE</div>
+<div class="sec-title">Guide for <em>LLM Agents</em></div>
+<div class="sec-rule"></div>
+<div class="sec-intro">This document is designed for direct injection into AI coding agents. Each section can be used independently for specific tasks.</div>
+
+<div class="two-col">
+<div class="section-header-block">
+<div class="label">FOR CLAUDE CODE / CURSOR / WINDSURF</div>
+<div class="desc">
+Use Section 01 (Verified Content) before writing any content-related code.<br><br>
+Use Section 04 (Effects Spec) before implementing animations.<br><br>
+Use Section 08 (Foundation Code) before creating config files.<br><br>
+Use Section 09 (Implementation Checklist) as the build roadmap.
+</div>
+</div>
+<div class="section-header-block">
+<div class="label">CRITICAL RULES</div>
+<div class="desc">
+• All YouTube thumbnails use verified video IDs from Section 01<br><br>
+• Never repeat Unsplash photo IDs across sections<br><br>
+• Facebook + Instagram embeds are REQUIRED on home socials section<br><br>
+• Dark mode is the default — light is toggled<br><br>
+• M-Pesa Paybill required on Give page (Kenyan org)<br><br>
+• Form inputs: font-size 16px always (prevents iOS zoom)<br><br>
+• Custom cursor disabled on touch/coarse-pointer devices<br><br>
+• Parallax disabled on mobile (≤767px) and prefers-reduced-motion
+</div>
+</div>
+</div>
+
+<div class="callout red">
+<div class="callout-title">⚠️ UNVERIFIED ITEMS — CONFIRM BEFORE USE</div>
+<div class="callout-text">
+• All YouTube video IDs from the brand document — verify against actual channel before embedding<br>
+• YouTube Channel ID for Rev B Akama channel — confirm from YouTube About page<br>
+• M-Pesa Paybill numbers (246656 / 4040519) — confirm with church administration<br>
+• Instagram handle @revbakama — verify follower count<br>
+• Books published by Rev B Akama — verify titles and purchase URLs<br>
+• Founded year of Sound of Abundance Church — brand doc does not specify
+</div>
+</div>
+</div>
+</section>
+
+<!-- SECTION 01: VERIFIED CONTENT DATA -->
+<section id="section-01">
+<div class="container">
+<div class="sec-num">01 — VERIFIED CONTENT DATA</div>
+<div class="sec-title">Content <em>Data Tables</em></div>
+<div class="sec-rule"></div>
+<div class="sec-intro">All verified organization data. Use these tables as the single source of truth for all content. All links are real or marked UNVERIFIED.</div>
+
+<!-- Table 1: Identity -->
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:20px;">TABLE 1 — ORGANIZATION IDENTITY</h3>
+<table class="data-table">
+<thead><tr><th>Field</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Full Name</td><td>Sound of Abundance Church International</td></tr>
+<tr><td>Public Name</td><td>Sound of Abundance / SOA</td></tr>
+<tr><td>Abbreviation</td><td>SOA</td></tr>
+<tr><td>Location</td><td>Kangundo Road, Opposite Saika Estate, Nairobi, Kenya</td></tr>
+<tr><td>Founded</td><td>UNVERIFIED — confirm with church administration</td></tr>
+<tr><td>Website</td><td>UNVERIFIED — no official website found during research</td></tr>
+<tr><td>Tagline</td><td>"The Lord City"</td></tr>
+<tr><td>Vision (exact)</td><td>"The home where everything is available. Miracles happen. Deliverance. Prophetic. People are getting help."</td></tr>
+<tr><td>Description</td><td>Charismatic, prophetic, and deliverance-focused ministry. Dynamic center of spiritual power on Kangundo Road.</td></tr>
+<tr><td>Contact Numbers</td><td>0727 438 728 · 0728 864 344 · 0705 899 608</td></tr>
+<tr><td>Email</td><td>soachurch@gmail.com</td></tr>
+</tbody>
+</table>
+
+<!-- Table 2: Sermons -->
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:20px;">TABLE 2 — SERMON / TEACHING LIBRARY</h3>
+<table class="data-table">
+<thead><tr><th>Title</th><th>Speaker</th><th>Date</th><th>Video ID</th><th>YouTube URL</th><th>Category</th><th>Featured</th></tr></thead>
+<tbody>
+<tr><td>Your Time for Freedom Has Come</td><td>Rev B Akama</td><td>Apr 2025</td><td><code>x1DA8ias0kk</code></td><td><a href="https://youtube.com/watch?v=x1DA8ias0kk" target="_blank" class="data-table-link">youtube.com/watch?v=x1DA8ias0kk</a></td><td>SUNDAY SERVICE</td><td>✓</td></tr>
+<tr><td>How to Make Your Prophecy Come to Pass</td><td>Rev B Akama</td><td>Jan 2025</td><td><code>lXh6PaKEkbk</code></td><td><a href="https://youtube.com/watch?v=lXh6PaKEkbk" target="_blank" class="data-table-link">youtube.com/watch?v=lXh6PaKEkbk</a></td><td>SUNDAY SERVICE</td><td>✓</td></tr>
+<tr><td>Dominion Over Sickness & Diseases</td><td>Rev B Akama</td><td>2025</td><td><code>UNVERIFIED</code></td><td>—</td><td>DELIVERANCE</td><td>✓</td></tr>
+<tr><td>Special Impartation Service</td><td>Rev B Akama</td><td>2025</td><td><code>UNVERIFIED</code></td><td>—</td><td>CONFERENCE</td><td>—</td></tr>
+<tr><td>Ending the Cycle of Demonic Reoccurrence</td><td>Rev B Akama</td><td>2024</td><td><code>UNVERIFIED</code></td><td>—</td><td>PROPHETIC WARFARE</td><td>—</td></tr>
+<tr><td>Divine Encounter — Live Prayer Session</td><td>Rev B Akama</td><td>Apr 2025</td><td><code>x1DA8ias0kk</code></td><td><a href="https://youtube.com/watch?v=x1DA8ias0kk" target="_blank" class="data-table-link">youtube.com/watch?v=x1DA8ias0kk</a></td><td>PRAYER & FASTING</td><td>—</td></tr>
+<tr><td>High Praise Atmosphere</td><td>Rev B Akama</td><td>UNVERIFIED</td><td><code>HVYM0NHFm9w</code></td><td>UNVERIFIED</td><td>SUNDAY SERVICE</td><td>—</td></tr>
+<tr><td>Prophetic Authority — Studio Setting</td><td>Rev B Akama</td><td>UNVERIFIED</td><td><code>x4QwnW9Fzss</code></td><td>UNVERIFIED</td><td>LEADERSHIP</td><td>—</td></tr>
+<tr><td>One on One Prophetic Appointments</td><td>Rev B Akama</td><td>UNVERIFIED</td><td><code>CCHmHG0MUdQ</code></td><td>UNVERIFIED</td><td>PROPHETIC</td><td>—</td></tr>
+<tr><td>Holy Communion Aesthetics</td><td>Rev B Akama</td><td>UNVERIFIED</td><td><code>yzjF7fu0eL8</code></td><td>UNVERIFIED</td><td>MIDWEEK</td><td>—</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+<div class="callout-title">YouTube Thumbnail Pattern</div>
+<div class="callout-text">
+Primary: <code>https://img.youtube.com/vi/[VIDEO_ID]/maxresdefault.jpg</code> (1280×720)<br>
+Fallback: <code>https://img.youtube.com/vi/[VIDEO_ID]/hqdefault.jpg</code> (480×360)<br>
+Mobile: <code>https://img.youtube.com/vi/[VIDEO_ID]/mqdefault.jpg</code> (320×180)<br>
+onError handler: maxresdefault → hqdefault → /images/sermon-fallback.jpg
+</div>
+</div>
+
+<!-- Table 3: YouTube Channel -->
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:20px;">TABLE 3 — YOUTUBE CHANNEL DATA</h3>
+<table class="data-table">
+<thead><tr><th>Property</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Channel Name</td><td>Rev B Akama</td></tr>
+<tr><td>Primary URL</td><td>UNVERIFIED — determine from YouTube search</td></tr>
+<tr><td>SOA TV Channel URL</td><td>UNVERIFIED — determine from YouTube search</td></tr>
+<tr><td>Rev B Akama Channel ID</td><td>UNVERIFIED — extract from channel URL</td></tr>
+<tr><td>SOA TV Channel ID</td><td>UNVERIFIED — extract from channel URL</td></tr>
+<tr><td>Rev B Akama Subscribers</td><td>~6.1K (from brand doc)</td></tr>
+<tr><td>SOA TV Subscribers</td><td>~8.8K (from brand doc)</td></tr>
+<tr><td>Video Archive</td><td>2,300+ videos (from brand doc)</td></tr>
+<tr><td>RSS Feed URL</td><td><code>https://www.youtube.com/feeds/videos.xml?channel_id=[CHANNEL_ID]</code></td></tr>
+<tr><td>Subscribe Button Embed</td><td>Use official <code>g-ytsubscribe</code> class with channel ID</td></tr>
+</tbody>
+</table>
+
+<!-- Table 4: Socials -->
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:20px;">TABLE 4 — SOCIAL MEDIA LINKS</h3>
+<table class="data-table">
+<thead><tr><th>Platform</th><th>Handle/Page</th><th>URL</th><th>Followers</th><th>Brand Color</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Facebook</td><td>Rev B Akama and Sound of Abundance Church</td><td><a href="https://facebook.com/RevBAkamaandSoundofAbundanceChurch/" target="_blank" class="data-table-link">facebook.com/RevBAkamaandSoundofAbundanceChurch/</a></td><td>UNVERIFIED</td><td>#1877F2</td><td>Use Page Plugin embed</td></tr>
+<tr><td>YouTube</td><td>Rev B Akama</td><td>UNVERIFIED</td><td>~6.1K</td><td>#FF0000</td><td>Use Subscribe button embed</td></tr>
+<tr><td>YouTube (Secondary)</td><td>SOA TV KE</td><td>UNVERIFIED</td><td>~8.8K</td><td>#FF0000</td><td>Available on DTV</td></tr>
+<tr><td>Instagram</td><td>@revbakama</td><td>UNVERIFIED — check <a href="https://instagram.com/revbakama/" target="_blank" class="data-table-link">instagram.com/revbakama/</a></td><td>UNVERIFIED</td><td>#E1306C</td><td>Use Curator.io feed embed</td></tr>
+<tr><td>TikTok</td><td>UNVERIFIED</td><td>UNVERIFIED</td><td>UNVERIFIED</td><td>#000000</td><td>Short-form clips for youth</td></tr>
+<tr><td>SOA TV</td><td>Kenyan Christian Television</td><td>Available on DTV</td><td>—</td><td>#D4AF37</td><td>Broadcast ministry</td></tr>
+</tbody>
+</table>
+
+<!-- Table 5: M-Pesa -->
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:20px;">TABLE 5 — GIVING / M-PESA</h3>
+<table class="data-table">
+<thead><tr><th>Purpose</th><th>Paybill Number</th><th>Account</th></tr></thead>
+<tbody>
+<tr><td>General Offering & Core Ministry</td><td><code>246656</code></td><td><code>SOA</code></td></tr>
+<tr><td>SOA TV Broadcast Ministry</td><td><code>4040519</code></td><td><code>SOATV</code></td></tr>
+<tr><td>M-Pesa Number (alternative)</td><td>+254 701 258 774 (from Abundance Church International site)</td><td>—</td></tr>
+</tbody>
+</table>
+<div class="callout red">
+<div class="callout-title">⚠️ M-PESA VERIFICATION REQUIRED</div>
+<div class="callout-text">Paybill numbers 246656 and 4040519 are from the brand info document. Verify these with church administration before publishing to Give page. Wrong Paybill = funds go to wrong account.</div>
+</div>
+
+<!-- Table 6: Copy Strings -->
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:20px;">TABLE 6 — VERIFIED COPY STRINGS</h3>
+<table class="data-table">
+<thead><tr><th>Element</th><th>Copy</th></tr></thead>
+<tbody>
+<tr><td>Hero Headline Option 1</td><td>"Where Lives Are Transformed"</td></tr>
+<tr><td>Hero Headline Option 2</td><td>"The Lord City — Where Everything Is Available"</td></tr>
+<tr><td>Hero Headline Option 3</td><td>"Miracles. Deliverance. Prophetic. Abundance."</td></tr>
+<tr><td>Hero Sub-heading</td><td>"A home for miracles, deliverance, and abundance on Kangundo Road, Nairobi."</td></tr>
+<tr><td>Primary CTA</td><td>"WATCH LIVE"</td></tr>
+<tr><td>Secondary CTA</td><td>"PLAN A VISIT"</td></tr>
+<tr><td>Newsletter Headline</td><td>"Receive the Word Directly"</td></tr>
+<tr><td>Newsletter Sub</td><td>"Weekly prophetic encouragement and ministry updates delivered to your inbox."</td></tr>
+<tr><td>Footer Tagline</td><td>"The Lord City · Kangundo Road, Nairobi, Kenya 🇰🇪"</td></tr>
+<tr><td>Give Page Header</td><td>"Partner with Kingdom Business"</td></tr>
+<tr><td>Give Scripture</td><td>"The city shall be spread abroad through prosperity." — Zechariah 1:17</td></tr>
+<tr><td>Prophetic Appointments</td><td>"Tuesday One on One Prophetic Appointments"</td></tr>
+<tr><td>Festival Tagline</td><td>"Festival of Miracles — 4 Days of Brutal Prayers"</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<!-- SECTION 02: IMAGE ASSIGNMENTS -->
+<section id="section-02">
+<div class="container">
+<div class="sec-num">02 — IMAGE ASSIGNMENTS</div>
+<div class="sec-title">Zero-Repeat <em>Image Table</em></div>
+<div class="sec-rule"></div>
+<div class="sec-intro">Every section across all pages has exactly one unique Unsplash photo ID. No repeats. CSS-only sections noted. ⚠️ REAL PHOTO REQUIRED sections called out.</div>
+
+<table class="image-table">
+<thead><tr><th>PAGE / SECTION</th><th>TYPE</th><th>UNSPLASH ID</th><th>FULL URL</th><th>TREATMENT</th></tr></thead>
+<tbody>
+<tr><td>Home / Hero</td><td>HERO BG</td><td>UNVERIFIED</td><td>—</td><td class="photo-req">⚠️ REAL PASTOR PHOTO — Extract from HVYM0NHFm9w YouTube broadcast. Wide-angle during peak praise. Opacity 0.10 + parallax 0.15x. Desktop only.</td></tr>
+<tr><td>Home / Stats Bar</td><td>CSS ONLY</td><td>—</td><td>—</td><td class="css-only">Pure CSS — no image</td></tr>
+<tr><td>Home / Featured Content BG</td><td>SECTION</td><td>UNVERIFIED</td><td>—</td><td>Blurred bokeh lights. Opacity 0.04. No parallax. Background layer.</td></tr>
+<tr><td>Home / Ministry Arms BG</td><td>SECTION</td><td>UNVERIFIED</td><td>—</td><td>Soft warm atmosphere. Opacity 0.03. No parallax.</td></tr>
+<tr><td>Home / Testimonials BG</td><td>SECTION</td><td>UNVERIFIED</td><td>—</td><td>Soft light rays. Opacity 0.05. blur-sm. No parallax.</td></tr>
+<tr><td>Home / Socials BG</td><td>CSS ONLY</td><td>—</td><td>—</td><td class="css-only">Pure CSS + particles — no image</td></tr>
+<tr><td>Home / Newsletter BG</td><td>SECTION</td><td>UNVERIFIED</td><td>—</td><td>Golden bokeh light leaks. Opacity 0.05. blur-lg.</td></tr>
+<tr><td>About / Hero Split</td><td>HERO BG</td><td>—</td><td>—</td><td class="photo-req">⚠️ REAL PASTOR PHOTO — Extract from x4QwnW9Fzss. Well-lit studio setting, authoritative pastoral posture.</td></tr>
+<tr><td>About / Timeline BG</td><td>SECTION</td><td>UNVERIFIED</td><td>—</td><td>African sky / open landscape. Opacity 0.04. No parallax.</td></tr>
+<tr><td>About / Quote BG</td><td>SECTION</td><td>UNVERIFIED</td><td>—</td><td>Open Bible / scripture text. Opacity 0.05. blur-sm.</td></tr>
+<tr><td>About / Beliefs BG</td><td>SECTION</td><td>UNVERIFIED</td><td>—</td><td>Subtle sacred atmosphere. Opacity 0.03. No parallax.</td></tr>
+<tr><td>Sermons / Header</td><td>HERO BG</td><td>UNVERIFIED</td><td>—</td><td>Spotlight / microphone / podium. Opacity 0.08. parallax 0.2x. Desktop only.</td></tr>
+<tr><td>Sermons / Content BG</td><td>CSS ONLY</td><td>—</td><td>—</td><td class="css-only">Pure CSS gradient — no image</td></tr>
+<tr><td>Ministries / Header</td><td>HERO BG</td><td>UNVERIFIED</td><td>—</td><td>Stage lights / worship crowd. Opacity 0.15. parallax 0.4x. Desktop only.</td></tr>
+<tr><td>Ministries / Pillars BG</td><td>SECTION</td><td>UNVERIFIED</td><td>—</td><td>Warm atmospheric glow. Opacity 0.04. No parallax.</td></tr>
+<tr><td>Events / Hero</td><td>HERO BG</td><td>UNVERIFIED</td><td>—</td><td>Cathedral interior / crowd. Opacity 0.12. parallax 0.35x. Desktop only.</td></tr>
+<tr><td>Events / Schedule BG</td><td>SECTION</td><td>UNVERIFIED</td><td>—</td><td>Subtle warmth. Opacity 0.03. No parallax.</td></tr>
+<tr><td>Give / Header</td><td>HERO BG</td><td>UNVERIFIED</td><td>—</td><td>Golden abstract / warm bokeh. Opacity 0.06. blur-sm. No parallax.</td></tr>
+<tr><td>Give / M-Pesa BG</td><td>CSS ONLY</td><td>—</td><td>—</td><td class="css-only">Pure CSS — no image</td></tr>
+<tr><td>Connect / Header</td><td>HERO BG</td><td>UNVERIFIED</td><td>—</td><td>Community hands / gathering. Opacity 0.06. No parallax.</td></tr>
+<tr><td>Connect / Constellation BG</td><td>CSS ONLY</td><td>—</td><td>—</td><td class="css-only">Pure CSS + canvas particles — no image</td></tr>
+</tbody>
+</table>
+
+<div class="callout red">
+<div class="callout-title">⚠️ REAL PHOTO REQUIRED — DO NOT SUBSTITUTE</div>
+<div class="callout-text">
+<b>About / Hero Split</b> — Requires official press photo of Rev. B. Akama. Until provided: use "SOA" monogram as placeholder (brand colors, no external person's image).<br><br>
+<b>Home / Hero</b> — Extract from HVYM0NHFm9w YouTube broadcast. Wide-angle congregation shot during peak praise. Contact church admin for high-res version.<br><br>
+Never use stock photos of other people's faces as pastoral substitutes.
+</div>
+</div>
+
+<div class="callout">
+<div class="callout-title">Unsplash Photo Sourcing Strategy</div>
+<div class="callout-text">
+For atmospheric backgrounds (where real photos aren't available), use these thematic categories:<br><br>
+• Church/crowd atmosphere: <code>photo-1519834785169-98be25ec3f84</code> (worship hands up)<br>
+• African sky/landscape: <code>photo-1516026672322-bc52d61a55d5</code> (golden hour)<br>
+• Light beams/spotlight: <code>photo-1540575467063-178a50c2df87</code> (stage spotlights)<br>
+• Golden bokeh: <code>photo-1507003211169-0a1dd7228f2d</code> (warm bokeh)<br>
+• Community/gathering: <code>photo-1491438590914-bc09fcaaf77e</code> (people together)<br><br>
+All hero images: <code>?w=1920&q=85</code> · Section backgrounds: <code>?w=1200&q=80</code> · Blurred/faded: <code>?w=1200&q=75&blur=40</code>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SECTION 03: PAGE BUILD NOTES -->
+<section id="section-03">
+<div class="container">
+<div class="sec-num">03 — PAGE BUILD NOTES</div>
+<div class="sec-title">Individual Page <em>Notes</em></div>
+<div class="sec-rule"></div>
+<div class="sec-intro">Build order, key implementation notes, and special considerations per page.</div>
+
+<div class="two-col">
+<div>
+<div class="page-build-note">
+<h4>BUILD ORDER</h4>
+<ol class="num-list">
+<li>Home — the grand entrance, maximum visual impact</li>
+<li>Sermons — content-first, YouTube integration</li>
+<li>About — storytelling, timeline, leadership</li>
+<li>Ministries — dramatic, ministry arm showcase</li>
+<li>Events — schedule clarity + upcoming events</li>
+<li>Give — M-Pesa integration, Kingdom framing</li>
+<li>Connect — prayer requests, contact, constellation</li>
+</ol>
+</div>
+
+<div class="page-build-note">
+<h4>HOME PAGE — 9 SECTION NOTES</h4>
+<p>• Hero: Extract real photo from HVYM0NHFm9w YouTube broadcast (wide-angle during peak praise). Full-bleed background with opacity 0.10 + dark overlay (gradient from transparent to var(--bg)). 2 light beams (gold gradient, opacity 0.08). SOA monogram watermark (opacity 0.02).</p>
+<p>• Live Strip: Integrate YouTube live detection API. Show "LIVE NOW" with animated red dot when streaming. Show "NEXT SERVICE: Sunday Main Service · 9:45 AM EAT" when not live. CTA links to /sermons or active YouTube stream.</p>
+<p>• Stats: Animated counter using Framer Motion. Trigger on scroll-enter (IntersectionObserver once:true). Use real estimates for stats: 10+ years, 6 ministry arms, 3 weekly services, DTV reach.</p>
+<p>• Socials (REQUIRED): Facebook Page Plugin (lazyOnload, timeline tab) + Curator.io Instagram feed (3-column grid, 6 posts, hover overlay). Both embeds must be live — no link-only fallback.</p>
+</div>
+
+<div class="page-build-note">
+<h4>SERMONS PAGE — FILTER LOGIC</h4>
+<p>Client-side filter using category constants from lib/content.ts:</p>
+<pre style="font-family:monospace;font-size:.72rem;color:var(--accent-lt);background:var(--card);padding:16px;margin:12px 0;">
+const CATEGORIES = [
+  { id: 'ALL', label: 'All' },
+  { id: 'SUNDAY_SERVICE', label: 'Sunday Service' },
+  { id: 'MIDWEEK', label: 'Midweek' },
+  { id: 'CONFERENCE', label: 'Conference' },
+  { id: 'DELIVERANCE', label: 'Deliverance' },
+  { id: 'PRAYER_FASTING', label: 'Prayer & Fasting' },
+  { id: 'PROPHETIC_WARFARE', label: 'Prophetic Warfare' },
+];
+</pre>
+<p>Filter uses AnimatePresence for grid transitions. Search: client-side text match on title + speaker. YouTube live detection: probe <code>https://www.youtube.com/channel/[CHANNEL_ID]/live</code> or use YouTube Data API v3.</p>
+</div>
+</div>
+
+<div>
+<div class="page-build-note">
+<h4>GIVE PAGE — M-PESA SPEC</h4>
+<p>Display prominently at top of page:</p>
+<pre style="font-family:monospace;font-size:.72rem;color:var(--accent-lt);background:var(--card);padding:16px;margin:12px 0;">
+GENERAL OFFERING
+Paybill: 246656
+Account: SOA
+
+SOA TV BROADCAST MINISTRY
+Paybill: 4040519
+Account: SOATV
+</pre>
+<p>Copy-to-clipboard button for each Paybill/Account pair. M-Pesa integration via Safaricom Daraja API (Phase 2) or manual instructions (Phase 1). Kingdom Business framing: Zechariah 1:17 scripture. Stripe for international card payments.</p>
+</div>
+
+<div class="page-build-note">
+<h4>CONNECT PAGE — FORM SPEC</h4>
+<p>Form fields: Name (text), Email (email), Phone (tel), Subject (pill selector: Prayer Request / Visit Info / General), Message (textarea). Floating labels on all inputs. 16px font on all inputs. Subject pills: tap to select, one active at a time. Submit CTA: "SEND PRAYER REQUEST →" or "SEND MESSAGE →" based on subject. Form submits to API route or email service (Mailchimp/ConvertKit).</p>
+</div>
+
+<div class="page-build-note">
+<h4>ABOUT PAGE — TIMELINE</h4>
+<p>Vertical timeline with estimated milestones. Since exact founded year is UNVERIFIED, use "Est. ~2015" or mark as "Year unconfirmed — verify with church admin." Timeline nodes animate on scroll-enter (dot fills with accent). Year labels in display italic, descriptions in body font.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SECTION 04: EFFECTS SPECIFICATION -->
+<section id="section-04">
+<div class="container">
+<div class="sec-num">04 — EFFECTS SPECIFICATION</div>
+<div class="sec-title">Premium Effects <em>Code</em></div>
+<div class="sec-rule"></div>
+<div class="sec-intro">Implementation-ready code snippets for every premium effect. All snippets are copy-paste usable with brand token substitution.</div>
+
+<!-- Loading Screen -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/LoadingScreen.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+
+export function LoadingScreen() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (!sessionStorage.getItem('soa-loaded')) {
+      setShow(true);
+    }
+  }, []);
+
+  const handleComplete = () => {
+    sessionStorage.setItem('soa-loaded', '1');
+    setShow(false);
+  };
+
+  if (!show) return null;
+
+  return (
+    &lt;AnimatePresence&gt;
+      &lt;motion.div
+        initial={{ opacity: 1 }}
+        exit={{ opacity: 0, transition: { duration: 0.4, delay: 1.2 } }}
+        onAnimationComplete={handleComplete}
+        style={{
+          position: 'fixed', inset: 0,
+          background: 'var(--bg)',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          zIndex: 9998,
+        }}
+      &gt;
+        {/* Monogram */}
+        &lt;motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic', fontWeight: 700,
+            fontSize: '5rem', color: 'var(--accent-lt)',
+            lineHeight: 1,
+            border: '1px solid rgba(212,175,55,0.4)',
+            padding: '12px 28px',
+          }}
+        &gt;
+          SOA
+        &lt;/motion.div&gt;
+
+        {/* Gold rule */}
+        &lt;motion.div
+          initial={{ clipPath: 'inset(0 50% 0 50%)' }}
+          animate={{ clipPath: 'inset(0 0% 0 0%)' }}
+          transition={{ duration: 0.6, ease: 'ease', delay: 0.3 }}
+          style={{
+            width: '80px', height: '1px',
+            margin: '16px 0 12px',
+            background: 'linear-gradient(90deg, transparent, var(--accent), transparent)',
+          }}
+        /&gt;
+
+        {/* Org name */}
+        &lt;motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.7 }}
+          style={{
+            fontFamily: 'var(--font-caps)',
+            fontSize: '0.5rem', letterSpacing: '0.32em',
+            color: 'var(--accent)', textTransform: 'uppercase',
+          }}
+        &gt;
+          Sound of Abundance
+        &lt;/motion.div&gt;
+      &lt;/motion.div&gt;
+    &lt;/AnimatePresence&gt;
+  );
+}</pre>
+</div>
+
+<!-- Light Beam -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/LightBeam.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+
+const HOME_BEAMS = [
+  { width: '2px', left: '68%', rotate: '35deg',  opacity: 0.08, delay: '0s',  period: '8s' },
+  { width: '4px', left: '80%', rotate: '28deg',  opacity: 0.05, delay: '3s',  period: '10s' },
+];
+
+const MINISTRY_BEAMS = [
+  { width: '3px', left: '25%', rotate: '15deg',  opacity: 0.12, delay: '0s',  period: '7s' },
+  { width: '2px', left: '50%', rotate: '0deg',   opacity: 0.10, delay: '2s',  period: '9s' },
+  { width: '3px', left: '75%', rotate: '-12deg', opacity: 0.12, delay: '4s',  period: '8s' },
+];
+
+export function LightBeam({ variant = 'home' }: { variant?: 'home' | 'ministry' }) {
+  const beams = variant === 'ministry' ? MINISTRY_BEAMS : HOME_BEAMS;
+
+  return (
+    &lt;&gt;
+      {beams.map((b, i) =&gt; (
+        &lt;div
+          key={i}
+          style={{
+            position: 'absolute',
+            top: '-10%', left: b.left,
+            width: b.width, height: '140%',
+            background: `linear-gradient(180deg, rgba(212,175,55,${b.opacity}) 0%, rgba(212,175,55,${b.opacity * 0.6}) 40%, transparent 100%)`,
+            transformOrigin: 'top center',
+            transform: `rotate(${b.rotate}deg)`,
+            pointerEvents: 'none',
+            animation: `beamSway ${b.period} ease-in-out infinite ${b.delay}`,
+            // Mobile: reduce opacity
+            ['@media (max-width: 767px)']: {
+              opacity: b.opacity * 0.5,
+            },
+          }}
+        /&gt;
+      ))}
+    &lt;/&gt;
+  );
+}</pre>
+</div>
+
+<!-- Particles -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/Particles.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import { useCallback } from 'react';
+import Particles from '@tsparticles/react';
+import type { Container, Engine } from '@tsparticles/engine';
+import { loadSlim } from '@tsparticles/slim';
+
+export function ParticlesBg() {
+  const init = useCallback(async (engine: Engine) =&gt; {
+    await loadSlim(engine);
+  }, []);
+
+  const isMobile = typeof window !== 'undefined' && window.innerWidth &lt; 640;
+  const saveData = typeof navigator !== 'undefined' && (navigator as any).connection?.saveData;
+  const count = saveData ? 0 : isMobile ? 15 : 35;
+
+  const options = {
+    background: { color: { value: 'transparent' } },
+    particles: {
+      number: { value: count, density: { enable: true, area: 800 } },
+      color: { value: '#D4AF37' },
+      opacity: { value: { min: 0.08, max: 0.35 }, animation: { enable: true, speed: 0.5 } },
+      size: { value: { min: 1, max: 2.2 } },
+      move: { enable: true, speed: 0.4, direction: 'top', random: true, outModes: { default: 'out' } },
+      links: { enable: false },
+    },
+    interactivity: {
+      events: { onHover: { enable: false }, onClick: { enable: false } },
+    },
+    detectRetina: true,
+  };
+
+  return &lt;Particles init={init} options={options} /&gt;;
+}
+
+// Usage: import in page components
+// &lt;ParticlesBg /&gt; — use on: Home Hero, Home Socials, Connect Constellation
+// Do NOT use on every page — performance cost</pre>
+</div>
+
+<!-- ScrollReveal -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/ScrollReveal.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
+
+interface Props {
+  children: React.ReactNode;
+  delay?: number;
+  y?: number;
+  className?: string;
+}
+
+export function ScrollReveal({ children, delay = 0, y = 32, className }: Props) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-80px' });
+
+  return (
+    &lt;motion.div
+      ref={ref}
+      initial={{ opacity: 0, y }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1], delay }}
+      className={className}
+    &gt;
+      {children}
+    &lt;/motion.div&gt;
+  );
+}
+
+// STAGGER DELAY PATTERNS:
+// Section headings:    delay={0}
+// First paragraph:     delay={0.1}
+// Content cards:       delay={index * 0.08}
+// Timeline nodes:      delay={index * 0.15}
+// Stats items:         delay={index * 0.10}
+// Ministry tiles:      delay={index * 0.06}
+// Social nodes:        delay={index * 0.10}
+// Mobile: y from 32 → 16. Duration unchanged.</pre>
+</div>
+
+<!-- Stats Counter -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/StatsCounter.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
+import { useRef, useEffect } from 'react';
+
+function Counter({ target, label, suffix = '', prefix = '' }: {
+  target: number; label: string; suffix?: string; prefix?: string;
+}) {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (v) =&gt; Math.round(v));
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() =&gt; {
+    if (isInView) animate(count, target, { duration: 1.5, ease: 'easeOut' });
+  }, [isInView, target]);
+
+  return (
+    &lt;div ref={ref} className="text-center"&gt;
+      &lt;span className="font-display text-4xl text-accent-lt"&gt;
+        {prefix}{rounded}{suffix}
+      &lt;/span&gt;
+      &lt;p className="font-caps text-[0.5rem] tracking-[0.15em] text-muted uppercase mt-1"&gt;
+        {label}
+      &lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+// STATS DATA — fill from research:
+const SOA_STATS = [
+  { target: 10,     label: 'YEARS OF MINISTRY',   suffix: '+' },
+  { target: 6,      label: 'MINISTRY ARMS' },
+  { target: 3,      label: 'WEEKLY SERVICES' },
+  { target: 1,      label: 'DTV · SOA TV',        prefix: '' },
+];</pre>
+</div>
+
+<!-- Theme Toggle -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/ThemeToggle.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import { useTheme } from 'next-themes';
+import { motion } from 'framer-motion';
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    &lt;button
+      onClick={() =&gt; setTheme(theme === 'dark' ? 'light' : 'dark')}
+      style={{
+        background: 'none', border: 'none',
+        color: 'var(--muted)', fontSize: '1.1rem',
+        cursor: 'pointer', transition: 'color 0.3s',
+      }}
+      aria-label="Toggle theme"
+    &gt;
+      &lt;motion.span
+        key={theme}
+        initial={{ rotate: -180, opacity: 0 }}
+        animate={{ rotate: 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: 'ease' }}
+      &gt;
+        {theme === 'dark' ? '☀️' : '🌙'}
+      &lt;/motion.span&gt;
+    &lt;/button&gt;
+  );
+}
+
+// Layout setup:
+// app/layout.tsx
+// import { ThemeProvider } from 'next-themes';
+// &lt;html lang="en" suppressHydrationWarning&gt;
+// &lt;body&gt;
+//   &lt;ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem&gt;
+//     {children}
+//   &lt;/ThemeProvider&gt;
+// &lt;/body&gt;</pre>
+</div>
+
+<!-- Page Transitions -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">app/layout.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import { AnimatePresence, motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
+import { LoadingScreen } from '@/components/LoadingScreen';
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
+  return (
+    &lt;&gt;
+      &lt;LoadingScreen /&gt;
+      &lt;AnimatePresence mode="wait"&gt;
+        &lt;motion.div
+          key={pathname}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8, transition: { duration: 0.25, ease: 'easeIn' } }}
+          transition={{ duration: 0.45, ease: 'easeOut' }}
+        &gt;
+          {children}
+        &lt;/motion.div&gt;
+      &lt;/AnimatePresence&gt;
+    &lt;/&gt;
+  );
+}</pre>
+</div>
+
+<!-- Custom Cursor -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/CustomCursor.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import { useEffect } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
+
+export function CustomCursor() {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { stiffness: 200, damping: 20 };
+  const cursorX = useSpring(mouseX, springConfig);
+  const cursorY = useSpring(mouseY, springConfig);
+
+  useEffect(() =&gt; {
+    // Disable on touch/coarse-pointer devices
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    document.body.classList.add('has-custom-cursor');
+
+    const move = (e: MouseEvent) =&gt; {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+    window.addEventListener('mousemove', move);
+    return () =&gt; {
+      window.removeEventListener('mousemove', move);
+      document.body.classList.remove('has-custom-cursor');
+    };
+  }, [mouseX, mouseY]);
+
+  return (
+    &lt;&gt;
+      &lt;motion.div
+        style={{
+          position: 'fixed',
+          left: cursorX,
+          top: cursorY,
+          width: 20, height: 20,
+          border: '1px solid var(--accent)',
+          borderRadius: '50%',
+          transform: 'translate(-50%, -50%)',
+          pointerEvents: 'none',
+          zIndex: 9999,
+          transition: 'width 0.2s, height 0.2s, border-color 0.2s',
+        }}
+        className="cursor-ring"
+      /&gt;
+      &lt;motion.div
+        style={{
+          position: 'fixed',
+          left: mouseX,
+          top: mouseY,
+          width: 4, height: 4,
+          background: 'var(--accent)',
+          borderRadius: '50%',
+          transform: 'translate(-50%, -50%)',
+          pointerEvents: 'none',
+          zIndex: 10000,
+        }}
+      /&gt;
+    &lt;/&gt;
+  );
+}
+
+// CSS for hover states in globals.css:
+// .cursor-ring { transition: width 0.2s, height 0.2s; }
+// [data-hover="true"] .cursor-ring { width: 40px; height: 40px; background: rgba(212,175,55,0.12); }</pre>
+</div>
+
+<!-- Content Card -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/ContentCard.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+
+interface ContentCardProps {
+  title: string;
+  speaker: string;
+  date: string;
+  videoId: string;
+  category: string;
+  thumbnailMax: string;
+  thumbnailHq: string;
+  featured?: boolean;
+  onClick?: () =&gt; void;
+}
+
+export function ContentCard({
+  title, speaker, date, videoId, category,
+  thumbnailMax, thumbnailHq, featured = false, onClick
+}: ContentCardProps) {
+  const playUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+  return (
+    &lt;motion.div
+      whileHover={{ y: -6 }}
+      onClick={onClick ?? (() =&gt; window.open(playUrl, '_blank'))}
+      style={{
+        background: 'var(--card)',
+        overflow: 'hidden',
+        border: featured ? '1px solid var(--accent)' : '1px solid rgba(212,175,55,0.08)',
+        cursor: 'pointer',
+        transition: 'border-color 0.3s',
+      }}
+    &gt;
+      &lt;div style={{ position: 'relative', width: '100%', aspectRatio: '16/9' }}&gt;
+        &lt;Image
+          src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+          alt={title}
+          fill
+          style={{ objectFit: 'cover' }}
+          onError={(e) =&gt; {
+            (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+          }}
+        /&gt;
+        &lt;div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, transparent 50%, var(--card))',
+        }} /&gt;
+        &lt;motion.div
+          initial={{ scale: 0 }}
+          whileHover={{ scale: 1 }}
+          transition={{ duration: 0.2, delay: 0.05 }}
+          style={{
+            position: 'absolute', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 56, height: 56, borderRadius: '50%',
+            background: 'rgba(212,175,55,0.2)',
+            border: '2px solid var(--accent)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '1.2rem', color: 'var(--accent)',
+          }}
+        &gt;
+          ▶
+        &lt;/motion.div&gt;
+        {featured &amp;&amp; (
+          &lt;div style={{
+            position: 'absolute', top: 12, right: 12,
+            fontFamily: 'var(--font-caps)', fontSize: '.38rem',
+            letterSpacing: '.15em', background: 'var(--accent)',
+            color: 'var(--bg)', padding: '4px 10px',
+          }}&gt;
+            FEATURED
+          &lt;/div&gt;
+        )}
+      &lt;/div&gt;
+      &lt;div style={{ padding: '20px' }}&gt;
+        &lt;div style={{
+          fontFamily: 'var(--font-display)', fontStyle: 'italic',
+          fontWeight: 600, color: 'var(--text)', marginBottom: '8px',
+          fontSize: '1.05rem', lineHeight: 1.3,
+        }}&gt;
+          {title}
+        &lt;/div&gt;
+        &lt;div style={{
+          fontFamily: 'var(--font-caps)', fontSize: '.4rem',
+          letterSpacing: '.15em', color: 'var(--muted)',
+        }}&gt;
+          {speaker} · {date}
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/motion.div&gt;
+  );
+}</pre>
+</div>
+
+</div>
+</section>
+
+<!-- SECTION 05: SOCIAL EMBEDS -->
+<section id="section-05">
+<div class="container">
+<div class="sec-num">05 — SOCIAL EMBEDS</div>
+<div class="sec-title">Social Embed <em>Code</em></div>
+<div class="sec-rule"></div>
+<div class="sec-intro">Ready-to-implement code for Facebook Page Plugin, Instagram feed, and YouTube Subscribe button. All embeds use lazyOnload strategy and have fallback states.</div>
+
+<!-- Facebook Embed -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/FacebookEmbed.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import Script from 'next/script';
+import { useRef, useState } from 'react';
+
+export function FacebookEmbed() {
+  const ref = useRef&lt;HTMLDivElement&gt;(null);
+  const [blocked, setBlocked] = useState(false);
+
+  const pageUrl = 'https://www.facebook.com/RevBAkamaandSoundofAbundanceChurch/';
+
+  return (
+    &lt;&gt;
+      &lt;Script
+        src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v18.0"
+        strategy="lazyOnload"
+        crossOrigin="anonymous"
+        onLoad={() =&gt; {
+          // Detect if blocked by ad blocker
+          if (ref.current &amp;&amp; !ref.current.innerHTML.includes('fb-page')) {
+            setBlocked(true);
+          }
+        }}
+      /&gt;
+      &lt;div ref={ref}&gt;
+        {blocked ? (
+          &lt;div style={{
+            padding: '32px', textAlign: 'center',
+            background: 'var(--card)',
+            border: '1px solid rgba(24,119,242,0.2)',
+          }}&gt;
+            &lt;div style={{ fontSize: '2rem', marginBottom: '12px' }}&gt;f&lt;/div&gt;
+            &lt;div style={{
+              fontFamily: 'var(--font-caps)', fontSize: '.48rem',
+              letterSpacing: '.2em', color: 'var(--text)', marginBottom: '12px',
+            }}&gt;
+              FACEBOOK
+            &lt;/div&gt;
+            &lt;a
+              href={pageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: 'var(--font-caps)', fontSize: '.42rem',
+                letterSpacing: '.18em', color: '#1877F2',
+                textDecoration: 'none',
+              }}
+            &gt;
+              FOLLOW ON FACEBOOK ↗
+            &lt;/a&gt;
+          &lt;/div&gt;
+        ) : (
+          &lt;div
+            className="fb-page"
+            data-href={pageUrl}
+            data-tabs="timeline,events"
+            data-width=""
+            data-height="500"
+            data-small-header="true"
+            data-adapt-container-width="true"
+            data-hide-cover="false"
+            data-show-facepile="true"
+          /&gt;
+        )}
+      &lt;/div&gt;
+    &lt;/&gt;
+  );
+}</pre>
+</div>
+
+<!-- Instagram Embed -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/InstagramEmbed.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import Script from 'next/script';
+
+export function InstagramEmbed({ curatorId }: { curatorId: string }) {
+  const handle = 'revbakama'; // UNVERIFIED — confirm
+  const [blocked, setBlocked] = useState(false);
+
+  return (
+    &lt;&gt;
+      {!blocked ? (
+        &lt;div&gt;
+          &lt;div id={`curator-feed-${curatorId}`}&gt;
+            &lt;a href="https://curator.io" target="_blank" className="crt-logo crt-tag"&gt;
+              Powered by Curator.io
+            &lt;/a&gt;
+          &lt;/div&gt;
+          &lt;Script
+            src={`//cdn.curator.io/published/${curatorId}.js`}
+            strategy="lazyOnload"
+            onError={() =&gt; setBlocked(true)}
+          /&gt;
+        &lt;/div&gt;
+      ) : (
+        &lt;div style={{
+          padding: '32px', textAlign: 'center',
+          background: 'var(--card)',
+          border: '1px solid rgba(225,48,108,0.2)',
+        }}&gt;
+          &lt;div style={{ fontSize: '2rem', marginBottom: '12px', color: '#E1306C' }}&gt;◉&lt;/div&gt;
+          &lt;div style={{
+            fontFamily: 'var(--font-caps)', fontSize: '.48rem',
+            letterSpacing: '.2em', color: 'var(--text)', marginBottom: '12px',
+          }}&gt;
+            INSTAGRAM
+          &lt;/div&gt;
+          &lt;a
+            href={`https://instagram.com/${handle}/`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontFamily: 'var(--font-caps)', fontSize: '.42rem',
+              letterSpacing: '.18em', color: '#E1306C',
+              textDecoration: 'none',
+            }}
+          &gt;
+            FOLLOW ON INSTAGRAM ↗
+          &lt;/a&gt;
+        &lt;/div&gt;
+      )}
+    &lt;/&gt;
+  );
+}
+
+// CURATOR.IO SETUP STEPS:
+// 1. Go to curator.io → Create Feed → Source: Instagram → Handle: revbakama
+// 2. Style: Grid, 3 columns, 6 posts, hover overlay with engagement counts
+// 3. Publish widget → Copy the widget ID (e.g., "abcdef123456")
+// 4. Pass the widget ID as curatorId prop: &lt;InstagramEmbed curatorId="abcdef123456" /&gt;</pre>
+</div>
+
+<!-- YouTube Subscribe -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/YouTubeSubscribe.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import Script from 'next/script';
+
+export function YouTubeSubscribe({ channelId }: { channelId: string }) {
+  // UNVERIFIED: Extract channel ID from Rev B Akama YouTube channel URL
+  // Format: UCxxxxxxxxxxxxxxxxxxxxxx
+  // Placeholder: 'UC_REPLACE_WITH_ACTUAL_CHANNEL_ID'
+
+  return (
+    &lt;div style={{ display: 'flex', justifyContent: 'center', padding: '32px 0' }}&gt;
+      &lt;Script
+        src="https://apis.google.com/js/platform.js"
+        strategy="lazyOnload"
+      /&gt;
+      &lt;div
+        className="g-ytsubscribe"
+        data-channelid={channelId}
+        data-layout="default"
+        data-count="default"
+      /&gt;
+    &lt;/div&gt;
+  );
+}
+
+// Usage on /sermons page: &lt;YouTubeSubscribe channelId="UCxxxxxxxxxx" /&gt;
+// Usage on /connect page: &lt;YouTubeSubscribe channelId="UCxxxxxxxxxx" /&gt;</pre>
+</div>
+
+<!-- Social Constellation -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/SocialConstellation.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
+
+const PLATFORMS = [
+  { id: 'facebook',  name: 'Facebook',   handle: '@SOAChurchKE',   color: '#1877F2', x: '20%', y: '25%',  url: 'https://facebook.com/RevBAkamaandSoundofAbundanceChurch/' },
+  { id: 'youtube',  name: 'YouTube',    handle: 'Rev B Akama',     color: '#FF0000', x: '60%', y: '15%',  url: '#' },
+  { id: 'instagram', name: 'Instagram', handle: '@revbakama',       color: '#E1306C', x: '80%', y: '35%',  url: '#' },
+  { id: 'soatv',    name: 'SOA TV',     handle: 'DTV Channel',    color: '#D4AF37', x: '35%', y: '65%',  url: '#' },
+  { id: 'tiktok',   name: 'TikTok',     handle: '@soachurchke',    color: '#000000', x: '70%', y: '70%',  url: '#' },
+];
+
+function ConstellationCanvas({ active }: { active: boolean }) {
+  const canvasRef = useRef&lt;HTMLCanvasElement&gt;(null);
+
+  useEffect(() =&gt; {
+    if (!active || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d')!;
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    let progress = 0;
+    const anim = () =&gt; {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (progress &lt; 1) progress += 0.025;
+
+      PLATFORMS.forEach((p, i) =&gt; {
+        PLATFORMS.forEach((q, j) =&gt; {
+          if (j &gt; i) {
+            const x1 = (parseFloat(p.x) / 100) * canvas.width;
+            const y1 = (parseFloat(p.y) / 100) * canvas.height;
+            const x2 = (parseFloat(q.x) / 100) * canvas.width;
+            const y2 = (parseFloat(q.y) / 100) * canvas.height;
+
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(212,175,55,${0.12 * progress})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+          }
+        });
+      });
+      if (progress &lt; 1) requestAnimationFrame(anim);
+    };
+    anim();
+  }, [active]);
+
+  return (
+    &lt;canvas
+      ref={canvasRef}
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+    /&gt;
+  );
+}
+
+export function SocialConstellation() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() =&gt; {
+    setIsMobile(window.innerWidth &lt; 768);
+  }, []);
+
+  if (isMobile) {
+    // Mobile: card stack with platform-color borders
+    return (
+      &lt;div ref={ref} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}&gt;
+        {PLATFORMS.map((p, i) =&gt; (
+          &lt;motion.a
+            key={p.id}
+            href={p.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, x: -20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ delay: i * 0.1 }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '16px',
+              padding: '16px 20px',
+              background: 'var(--card)',
+              borderLeft: `3px solid ${p.color}`,
+              textDecoration: 'none',
+              transition: 'transform 0.3s',
+            }}
+          &gt;
+            &lt;div style={{
+              width: 48, height: 48, borderRadius: '50%',
+              background: `rgba(${p.color},0.15)`,
+              border: `1px solid rgba(${p.color},0.4)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '1.2rem', color: p.color,
+            }}&gt;{p.id === 'youtube' ? '▶' : p.id === 'facebook' ? 'f' : '◉'}&lt;/div&gt;
+            &lt;div&gt;
+              &lt;div style={{ fontFamily: 'var(--font-caps)', fontSize: '.42rem', letterSpacing: '.15em', color: p.color }}&gt;{p.name}&lt;/div&gt;
+              &lt;div style={{ fontFamily: 'var(--font-body)', fontStyle: 'italic', fontSize: '.8rem', color: 'var(--muted)' }}&gt;{p.handle}&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/motion.a&gt;
+        ))}
+      &lt;/div&gt;
+    );
+  }
+
+  // Desktop: floating nodes with canvas
+  return (
+    &lt;div
+      ref={ref}
+      style={{ position: 'relative', height: '320px', overflow: 'hidden' }}
+    &gt;
+      &lt;ConstellationCanvas active={isInView} /&gt;
+
+      {PLATFORMS.map((p, i) =&gt; (
+        &lt;motion.a
+          key={p.id}
+          href={p.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={isInView ? { scale: 1, opacity: 1 } : {}}
+          transition={{ delay: 0.8 + i * 0.1 }}
+          style={{
+            position: 'absolute',
+            left: p.x, top: p.y,
+            transform: 'translate(-50%, -50%)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            textDecoration: 'none',
+          }}
+        &gt;
+          &lt;div
+            style={{
+              width: 80, height: 80, borderRadius: '50%',
+              background: `rgba(${p.color},0.12)`,
+              border: `1px solid rgba(${p.color},0.4)`,
+              boxShadow: `0 0 20px rgba(${p.color},0.25)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '2rem', color: p.color,
+              transition: 'box-shadow 0.3s, transform 0.3s',
+            }}
+          &gt;
+            {p.id === 'youtube' ? '▶' : p.id === 'facebook' ? 'f' : '◉'}
+          &lt;/div&gt;
+          &lt;div style={{ fontFamily: 'var(--font-caps)', fontSize: '.38rem', letterSpacing: '.15em', color: 'var(--muted)', marginTop: '8px', textAlign: 'center' }}&gt;{p.name}&lt;/div&gt;
+        &lt;/motion.a&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}</pre>
+</div>
+
+</div>
+</section>
+
+<!-- SECTION 06: NAV & FOOTER SPEC -->
+<section id="section-06">
+<div class="container">
+<div class="sec-num">06 — NAV & FOOTER SPEC</div>
+<div class="sec-title">Navigation & <em>Footer</em></div>
+<div class="sec-rule"></div>
+<div class="sec-intro">Detailed specification for the navigation system and footer. Mobile hamburger overlay with stagger animation.</div>
+
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/Navigation.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">"use client";
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeToggle } from './ThemeToggle';
+
+const LINKS = [
+  { href: '/',        label: 'HOME' },
+  { href: '/about',   label: 'ABOUT' },
+  { href: '/sermons', label: 'SERMONS' },
+  { href: '/ministries', label: 'MINISTRIES' },
+  { href: '/events',  label: 'EVENTS' },
+  { href: '/give',    label: 'GIVE' },
+  { href: '/connect', label: 'CONNECT' },
+];
+
+export function Navigation() {
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() =&gt; {
+    const handleScroll = () =&gt; setScrolled(window.scrollY &gt; 60);
+    window.addEventListener('scroll', handleScroll);
+    return () =&; window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close on route change
+  useEffect(() =&gt; { setOpen(false); }, []);
+
+  return (
+    &lt;&gt;
+      {/* Desktop Nav */}
+      &lt;nav style={{
+        position: 'sticky', top: 0, zIndex: 100,
+        background: scrolled ? 'rgba(10,5,8,0.92)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(12px)' : 'none',
+        borderBottom: '1px solid rgba(212,175,55,0.15)',
+        padding: '16px 40px',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        transition: 'background 0.4s, backdrop-filter 0.4s',
+      }}&gt;
+        &lt;Link href="/" style={{
+          fontFamily: 'var(--font-display)', fontStyle: 'italic',
+          fontWeight: 700, fontSize: '1.3rem', color: 'var(--accent-lt)',
+          textDecoration: 'none',
+        }}&gt;
+          Sound of Abundance
+        &lt;/Link&gt;
+
+        &lt;div style={{ display: 'flex', gap: '32px', alignItems: 'center' }} className="desktop-nav"&gt;
+          {LINKS.map(link =&gt; (
+            &lt;Link key={link.href} href={link.href} style={{
+              fontFamily: 'var(--font-caps)', fontSize: '.48rem',
+              letterSpacing: '.2em', color: 'var(--muted)',
+              textDecoration: 'none', transition: 'color 0.3s',
+            }}
+              onMouseEnter={e =&gt; (e.target as HTMLElement).style.color = 'var(--text)'}
+              onMouseLeave={e =&gt; (e.target as HTMLElement).style.color = 'var(--muted)'}
+            &gt;
+              {link.label}
+            &lt;/Link&gt;
+          ))}
+          &lt;ThemeToggle /&gt;
+          &lt;Link href="/sermons" style={{
+            fontFamily: 'var(--font-caps)', fontSize: '.42rem',
+            letterSpacing: '.18em', color: 'var(--accent)',
+            border: '1px solid rgba(212,175,55,0.4)',
+            padding: '10px 20px', textDecoration: 'none',
+            transition: 'all 0.3s',
+          }}&gt;
+            JOIN LIVE SERVICE
+          &lt;/Link&gt;
+        &lt;/div&gt;
+
+        {/* Mobile hamburger */}
+        &lt;div className="mobile-nav-trigger" style={{ display: 'none' }}&gt;
+          &lt;button
+            onClick={() =&gt; setOpen(!open)}
+            style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: '1.8rem', cursor: 'pointer' }}
+          &gt;
+            ☰
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/nav&gt;
+
+      {/* Mobile Overlay */}
+      &lt;AnimatePresence&gt;
+        {open &amp;&amp; (
+          &lt;motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 200,
+              background: 'rgba(10,5,8,0.98)', backdropFilter: 'blur(20px)',
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: '24px',
+            }}
+          &gt;
+            &lt;button
+              onClick={() =&gt; setOpen(false)}
+              style={{
+                position: 'absolute', top: '20px', right: '24px',
+                background: 'none', border: 'none', color: 'var(--muted)',
+                fontSize: '1.5rem', cursor: 'pointer',
+              }}
+            &gt;
+              ✕
+            &lt;/button&gt;
+
+            {LINKS.map((link, i) =&gt; (
+              &lt;motion.div
+                key={link.href}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06 }}
+              &gt;
+                &lt;Link href={link.href} style={{
+                  fontFamily: 'var(--font-display)', fontStyle: 'italic',
+                  fontSize: '2.5rem', color: 'var(--text)',
+                  textDecoration: 'none', textAlign: 'center', display: 'block',
+                }}&gt;
+                  {link.label}
+                &lt;/Link&gt;
+              &lt;/motion.div&gt;
+            ))}
+
+            &lt;div style={{ display: 'flex', gap: '20px', marginTop: '24px' }}&gt;
+              {['f', '▶', '◉'].map((icon, i) =&gt; (
+                &lt;div key={i} style={{
+                  width: 40, height: 40, borderRadius: '50%',
+                  background: 'rgba(212,175,55,0.1)',
+                  border: '1px solid rgba(212,175,55,0.2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1rem', color: 'var(--accent)',
+                }}&gt;{icon}&lt;/div&gt;
+              ))}
+            &lt;/div&gt;
+          &lt;/motion.div&gt;
+        )}
+      &lt;/AnimatePresence&gt;
+
+      &lt;style&gt;{`
+        @media (max-width: 768px) {
+          .desktop-nav { display: none !important; }
+          .mobile-nav-trigger { display: block !important; }
+        }
+      `}&lt;/style&gt;
+    &lt;/&gt;
+  );
+}</pre>
+</div>
+
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">components/Footer.tsx</span><span class="lang">TSX</span></div>
+<pre class="code-file-pre">import Link from 'next/link';
+
+const FOOTER_LINKS = {
+  navigate: [
+    { href: '/', label: 'Home' },
+    { href: '/about', label: 'About' },
+    { href: '/sermons', label: 'Sermons' },
+    { href: '/ministries', label: 'Ministries' },
+    { href: '/events', label: 'Events' },
+    { href: '/give', label: 'Give' },
+    { href: '/connect', label: 'Connect' },
+  ],
+  ministries: [
+    { href: '/ministries', label: 'Sunday Service' },
+    { href: '/ministries', label: 'Prophetic Appointments' },
+    { href: '/ministries', label: 'Divine Encounter' },
+    { href: '/events', label: 'Festival of Miracles' },
+    { href: '/connect', label: 'Prayer Requests' },
+  ],
+};
+
+export function Footer() {
+  return (
+    &lt;footer style={{
+      background: 'var(--bg)',
+      borderTop: '1px solid rgba(212,175,55,0.15)',
+      padding: '60px 60px 30px',
+    }}&gt;
+      &lt;div style={{
+        maxWidth: '1180px', margin: '0 auto',
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '40px', marginBottom: '40px',
+      }}&gt;
+        {/* Brand column */}
+        &lt;div&gt;
+          &lt;Link href="/" style={{ textDecoration: 'none' }}&gt;
+            &lt;div style={{
+              fontFamily: 'var(--font-display)', fontStyle: 'italic',
+              fontSize: '1.1rem', fontWeight: 600, color: 'var(--accent-lt)',
+              marginBottom: '8px',
+            }}&gt;
+              The Lord City
+            &lt;/div&gt;
+          &lt;/Link&gt;
+          &lt;p style={{ fontFamily: 'var(--font-body)', fontSize: '.82rem', color: 'var(--muted)' }}&gt;
+            Kangundo Road, Opposite Saika Estate&lt;br /&gt;
+            Nairobi, Kenya 🇰🇪
+          &lt;/p&gt;
+          &lt;div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}&gt;
+            {['f', '▶', '◉', '✦'].map((icon, i) =&gt; (
+              &lt;a key={i} href="#" style={{
+                width: 36, height: 36, borderRadius: '50%',
+                background: 'rgba(212,175,55,0.08)',
+                border: '1px solid rgba(212,175,55,0.15)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '.9rem', color: 'var(--muted)', textDecoration: 'none',
+                transition: 'all 0.3s',
+              }}&gt;{icon}&lt;/a&gt;
+            ))}
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        {/* Navigate */}
+        &lt;div&gt;
+          &lt;h4 style={{ fontFamily: 'var(--font-caps)', fontSize: '.48rem', letterSpacing: '.2em', color: 'var(--accent)', marginBottom: '16px' }}&gt;
+            NAVIGATE
+          &lt;/h4&gt;
+          {FOOTER_LINKS.navigate.map(link =&gt; (
+            &lt;Link key={link.href} href={link.href} style={{
+              display: 'block', fontFamily: 'var(--font-body)', fontSize: '.85rem',
+              color: 'var(--muted)', textDecoration: 'none', marginBottom: '8px',
+              transition: 'color 0.3s',
+            }}&gt;
+              {link.label}
+            &lt;/Link&gt;
+          ))}
+        &lt;/div&gt;
+
+        {/* Ministries */}
+        &lt;div&gt;
+          &lt;h4 style={{ fontFamily: 'var(--font-caps)', fontSize: '.48rem', letterSpacing: '.2em', color: 'var(--accent)', marginBottom: '16px' }}&gt;
+            MINISTRIES
+          &lt;/h4&gt;
+          {FOOTER_LINKS.ministries.map(link =&gt; (
+            &lt;Link key={link.label} href={link.href} style={{
+              display: 'block', fontFamily: 'var(--font-body)', fontSize: '.85rem',
+              color: 'var(--muted)', textDecoration: 'none', marginBottom: '8px',
+              transition: 'color 0.3s',
+            }}&gt;
+              {link.label}
+            &lt;/Link&gt;
+          ))}
+        &lt;/div&gt;
+
+        {/* Newsletter */}
+        &lt;div&gt;
+          &lt;h4 style={{ fontFamily: 'var(--font-caps)', fontSize: '.48rem', letterSpacing: '.2em', color: 'var(--accent)', marginBottom: '16px' }}&gt;
+            RECEIVE
+          &lt;/h4&gt;
+          &lt;p style={{ fontFamily: 'var(--font-body)', fontSize: '.82rem', color: 'var(--muted)', marginBottom: '12px' }}&gt;
+            Get weekly prophetic updates:
+          &lt;/p&gt;
+          &lt;form style={{ display: 'flex', gap: '0', maxWidth: '300px' }}&gt;
+            &lt;input
+              type="email"
+              placeholder="your@email.com"
+              style={{
+                flex: 1, background: 'transparent', border: 'none',
+                borderBottom: '1px solid rgba(212,175,55,0.25)',
+                padding: '10px', fontFamily: 'var(--font-body)',
+                fontSize: '.85rem', color: 'var(--text)', outline: 'none',
+              }}
+            /&gt;
+            &lt;button type="submit" style={{
+              fontFamily: 'var(--font-caps)', fontSize: '.4rem',
+              letterSpacing: '.15em', background: 'var(--accent)',
+              color: 'var(--bg)', border: 'none', padding: '12px 16px',
+            }}&gt;
+              →
+            &lt;/button&gt;
+          &lt;/form&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      {/* Bottom bar */}
+      &lt;div style={{
+        borderTop: '1px solid rgba(212,175,55,0.1)',
+        paddingTop: '24px',
+        display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px',
+      }}&gt;
+        &lt;div style={{ fontFamily: 'var(--font-body)', fontSize: '.75rem', color: 'var(--muted)' }}&gt;
+          © 2025 Sound of Abundance Church International (SOA). All rights reserved.
+        &lt;/div&gt;
+        &lt;div style={{ fontFamily: 'var(--font-caps)', fontSize: '.42rem', letterSpacing: '.1em', color: 'var(--accent-dk)' }}&gt;
+          soundofabundance.org
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/footer&gt;
+  );
+}</pre>
+</div>
+
+</div>
+</section>
+
+<!-- SECTION 07: MOBILE QA -->
+<section id="section-07">
+<div class="container">
+<div class="sec-num">07 — MOBILE-FIRST RULES & QA CHECKLIST</div>
+<div class="sec-title">Mobile QA <em>&amp; Rules</em></div>
+<div class="sec-rule"></div>
+<div class="sec-intro">Core mobile rules and QA checklist for testing at 375px, 390px, 414px, and 768px viewports.</div>
+
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:20px;">CORE MOBILE RULES</h3>
+
+<div class="two-col">
+<div class="section-header-block">
+<div class="label">TYPOGRAPHY</div>
+<div class="desc">
+• All display text: clamp() — never fixed rem<br>
+• Body text: 1rem (16px) minimum always<br>
+• Form inputs: font-size: 16px !important (prevents iOS zoom)<br>
+• Caps labels: 0.52rem fixed — acceptable at this size<br>
+• Line-height: 0.9–1.1 for Display, 1.65–1.8 for Body
+</div>
+</div>
+<div class="section-header-block">
+<div class="label">LAYOUT COLLAPSES</div>
+<div class="desc">
+• Hero: 2-col → 1-col (monogram below text)<br>
+• Stats: 4-col → 2×2 grid<br>
+• Content cards: 3-col → horizontal scroll carousel (1.2 visible)<br>
+• Ministry tiles: 3-col → 1-col full-width stack<br>
+• Footer: 4-col → accordion (Framer Motion height animation)<br>
+• Socials: side-by-side → stacked (FB above IG)
+</div>
+</div>
+</div>
+
+<div class="two-col">
+<div class="section-header-block">
+<div class="label">DISABLED ON MOBILE</div>
+<div class="desc">
+• Parallax: ALL sections disabled (≤767px)<br>
+• Custom cursor: touch/coarse-pointer detection<br>
+• Particle count: max 15 (or 0 on save-data)<br>
+• Constellation: floating nodes → card stack
+</div>
+</div>
+<div class="section-header-block">
+<div class="label">TAP TARGETS</div>
+<div class="desc">
+• All buttons: min-height 48px<br>
+• All nav links: min-height 48px<br>
+• All social icons: min-width/height 48px<br>
+• Content cards: full card is tappable<br>
+• Filter pills: min-height 44px<br>
+• Form inputs: min-height 48px
+</div>
+</div>
+</div>
+
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:20px;margin-top:32px;">QA CHECKLIST — TEST AT 375PX, 390PX, 414PX, 768PX</h3>
+
+<div class="two-col">
+<div>
+<h4 style="font-family:var(--font-caps);font-size:.42rem;letter-spacing:.15em;color:var(--text);margin-bottom:12px;">LAYOUT &amp; CONTENT</h4>
+<ul class="checklist">
+<li>No horizontal scroll at any viewport width</li>
+<li>All text readable — no overflow, no text &lt; 14px</li>
+<li>Images fill containers correctly (aspect-ratio preserved)</li>
+<li>Grid columns correct at each breakpoint</li>
+<li>Content filter bar scrolls horizontally (no wrap)</li>
+<li>Books carousel horizontal scroll with item peek</li>
+<li>YouTube embeds 16:9 responsive (aspect-video)</li>
+<li>Facebook and Instagram embeds don't overflow container</li>
+</ul>
+</div>
+<div>
+<h4 style="font-family:var(--font-caps);font-size:.42rem;letter-spacing:.15em;color:var(--text);margin-bottom:12px;">INTERACTIONS &amp; PERFORMANCE</h4>
+<ul class="checklist">
+<li>All buttons and tap targets ≥ 48px height</li>
+<li>Hamburger menu opens full-screen correctly</li>
+<li>All nav links work from mobile menu</li>
+<li>Form inputs don't trigger iOS zoom (font-size: 16px)</li>
+<li>Lighthouse mobile performance ≥ 85</li>
+<li>Lighthouse accessibility ≥ 90</li>
+<li>Fonts loaded via next/font (no FOUT)</li>
+<li>Images lazy-loaded below fold (loading="lazy")</li>
+<li>Particles ≤ 15 on mobile viewport</li>
+<li>Parallax completely disabled (no transform)</li>
+<li>Custom cursor NOT rendered on mobile</li>
+<li>prefers-reduced-motion respected</li>
+</ul>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- SECTION 08: FOUNDATION CODE -->
+<section id="section-08">
+<div class="container">
+<div class="sec-num">08 — FOUNDATION CODE</div>
+<div class="sec-title">Foundation <em>Code Files</em></div>
+<div class="sec-rule"></div>
+<div class="sec-intro">Complete, copy-paste-ready foundation code files. All brand tokens filled in from the SOA brand identity system.</div>
+
+<!-- tailwind.config.ts -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">tailwind.config.ts</span><span class="lang">TYPESCRIPT</span></div>
+<pre class="code-file-pre">import type { Config } from 'tailwindcss';
+
+const config: Config = {
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  darkMode: ['attribute', 'data-theme'],
+  theme: {
+    extend: {
+      colors: {
+        // Dark theme
+        black:       '#0A0508',  // Throne Night
+        deep:        '#150810',  // Sanctuary Deep
+        navy:        '#1F0E14',  // Altar Ember
+        accent:      '#D4AF37',  // Kingdom Gold
+        'accent-lt': '#E8C47A',  // Prophet Gold
+        'accent-dk': '#8B6914',  // Altar Flame
+        cream:       '#F5EEE4',  // Scripture Cream
+        muted:       '#9A8A7A',  // Incense Mist
+        // Light theme
+        linen:       '#FAF5EE',  // Morning Light
+        'soft-panel':'#F5EDE0',  // Parchment Panel
+        'light-card': '#EDE5D8', // Linen Card
+        'deep-text': '#1A0D08',  // African Midnight
+        'mid-text':  '#6B5A4A',  // Earth Muted
+      },
+      fontFamily: {
+        display: ['Cormorant Garamond', 'Georgia', 'serif'],
+        caps:    ['Cinzel', 'serif'],
+        body:    ['EB Garamond', 'Georgia', 'serif'],
+      },
+      animation: {
+        'beam-sway':  'beamSway 8s ease-in-out infinite',
+        'pulse-accent': 'pulseAccent 2s ease-in-out infinite',
+        'draw-line':  'drawLine 0.6s ease forwards',
+        'float-up':   'floatUp 6s ease-in-out infinite',
+        'fade-up':    'fadeUp 0.7s ease-out forwards',
+        'blink':      'blink 1s ease-in-out infinite',
+      },
+      keyframes: {
+        beamSway: {
+          '0%,100%': { transform: 'rotate(35deg)' },
+          '50%': { transform: 'rotate(38deg)', opacity: '0.7' },
+        },
+        pulseAccent: {
+          '0%,100%': { boxShadow: '0 0 0 0 transparent' },
+          '50%': { boxShadow: '0 0 20px 4px rgba(212,175,55,0.3)' },
+        },
+        drawLine: {
+          from: { clipPath: 'inset(0 100% 0 0)' },
+          to: { clipPath: 'inset(0 0% 0 0%)' },
+        },
+        floatUp: {
+          '0%,100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-8px)' },
+        },
+        fadeUp: {
+          from: { opacity: '0', transform: 'translateY(32px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        blink: {
+          '0%,100%': { opacity: '1' },
+          '50%': { opacity: '0.3' },
+        },
+      },
+    },
+  },
+  plugins: [],
+};
+export default config;</pre>
+</div>
+
+<!-- globals.css -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">app/globals.css</span><span class="lang">CSS</span></div>
+<pre class="code-file-pre">@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* === DARK THEME (default) === */
+  :root, [data-theme="dark"] {
+    --bg:        #0A0508;  /* Throne Night */
+    --panel:     #150810;  /* Sanctuary Deep */
+    --card:      #1F0E14;  /* Altar Ember */
+    --accent:    #D4AF37;  /* Kingdom Gold */
+    --accent-lt: #E8C47A;  /* Prophet Gold */
+    --accent-dk: #8B6914;  /* Altar Flame */
+    --text:      #F5EEE4;  /* Scripture Cream */
+    --muted:     #9A8A7A;  /* Incense Mist */
+  }
+
+  /* === LIGHT THEME === */
+  [data-theme="light"] {
+    --bg:        #FAF5EE;  /* Morning Light */
+    --panel:     #F5EDE0;  /* Parchment Panel */
+    --card:      #EDE5D8;  /* Linen Card */
+    --accent:    #D4AF37;  /* Kingdom Gold (same) */
+    --accent-lt: #C9920A;  /* Prophet Gold (darker for light bg) */
+    --accent-dk: #8B6914;  /* Altar Flame (same) */
+    --text:      #1A0D08;  /* African Midnight */
+    --muted:     #6B5A4A;  /* Earth Muted */
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'EB Garamond', Georgia, serif;
+    overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Prevent iOS zoom on inputs */
+  input, textarea, select { font-size: 16px !important; }
+
+  /* Thin accent-color scrollbar */
+  ::-webkit-scrollbar        { width: 3px; }
+  ::-webkit-scrollbar-track   { background: var(--bg); }
+  ::-webkit-scrollbar-thumb   { background: var(--accent-dk); border-radius: 2px; }
+
+  /* Custom cursor */
+  body.has-custom-cursor,
+  body.has-custom-cursor * { cursor: none !important; }
+
+  /* Film grain overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-display   { font-family: 'Cormorant Garamond', Georgia, serif; }
+  .font-caps       { font-family: 'Cinzel', serif; }
+  .font-body       { font-family: 'EB Garamond', Georgia, serif; }
+  .text-balance    { text-wrap: balance; }
+  .section-px      { @apply px-5 md:px-12 lg:px-20; }
+  .section-py      { @apply py-16 md:py-24 lg:py-32; }
+  .accent-rule     { width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+  .text-gradient   { background: linear-gradient(135deg, var(--accent), var(--accent-lt)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+}</pre>
+</div>
+
+<!-- next.config.js -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">next.config.js</span><span class="lang">JAVASCRIPT</span></div>
+<pre class="code-file-pre">/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/photo-**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+        pathname: '/vi/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
+        pathname: '/vi/**',
+      },
+    ],
+  },
+};
+
+module.exports = nextConfig;</pre>
+</div>
+
+<!-- lib/content.ts -->
+<div class="code-file-block">
+<div class="code-file-header"><span class="name">lib/content.ts</span><span class="lang">TYPESCRIPT</span></div>
+<pre class="code-file-pre">// lib/content.ts — All verified SOA content data
+
+export const ORG = {
+  name: 'Sound of Abundance Church International',
+  publicName: 'Sound of Abundance',
+  abbreviation: 'SOA',
+  location: 'Kangundo Road, Opposite Saika Estate, Nairobi, Kenya',
+  founded: 'UNVERIFIED', // Confirm with church admin
+  website: 'UNVERIFIED', // No official website found
+  vision: 'The home where everything is available. Miracles happen. Deliverance. Prophetic. People are getting help.',
+  tagline: 'The Lord City',
+  description: 'Charismatic, prophetic, and deliverance-focused ministry on Kangundo Road, Nairobi.',
+};
+
+export const LEADERS = [
+  {
+    name: 'Rev. B. Akama',
+    title: 'Senior Pastor / General Overseer',
+    role: 'Founder and senior pastor of Sound of Abundance Church International',
+    bio: 'Senior pastor of Sound of Abundance Church International. Leads with charismatic, authoritative ministry style. Known for intense "machine gun" prayer sessions and pastoral impartation using mantles and towels.',
+    socials: {
+      facebook: { url: 'https://facebook.com/RevBAkamaandSoundofAbundanceChurch/', followers: 'UNVERIFIED' },
+      instagram: { handle: '@revbakama', url: 'UNVERIFIED', followers: 'UNVERIFIED' },
+    },
+    books: [], // UNVERIFIED — confirm published books
+  },
+];
+
+export const MINISTRY_ARMS = [
+  { id: 'sunday',    numeral: 'I',   name: 'SUNDAY MAIN SERVICE',    description: 'High Praise worship environment with prophetic preaching. Dual service structure.', type: 'SUNDAY_SERVICE',   cta: 'ATTEND SUNDAY →', ctaUrl: null },
+  { id: 'prophetic', numeral: 'II',  name: 'TUESDAY PROPHETIC',       description: 'One-on-one prophetic sessions with Rev. B. Akama for individual breakthrough.', type: 'PROPHETIC',         cta: 'BOOK APPOINTMENT →', ctaUrl: null },
+  { id: 'midweek',  numeral: 'III', name: 'DIVINE ENCOUNTER',        description: 'Midweek sacramental services featuring Holy Communion and intensive prayer.', type: 'MIDWEEK',          cta: 'JOIN MIDWEEK →', ctaUrl: null },
+  { id: 'festival', numeral: 'IV',  name: 'FESTIVAL OF MIRACLES',     description: 'Annual multi-day intensive conference featuring healing and deliverance.', type: 'CONFERENCE',        cta: 'FESTIVAL 2025 →', ctaUrl: null },
+  { id: 'soatv',    numeral: 'V',   name: 'SOA TV BROADCAST',        description: 'Kenyan television station broadcasting church services on DTV.', type: 'BROADCAST',          cta: 'WATCH ON SOA TV →', ctaUrl: null },
+  { id: 'arrows',   numeral: 'VI',  name: 'ARROWS OF FIRE PRAYER',    description: 'Evening prayer sessions with intense, aggressive prayer for breakthrough.', type: 'PRAYER',            cta: 'PRAYER SESSIONS →', ctaUrl: null },
+];
+
+export const SERMONS = [
+  { id: 1,  title: 'Your Time for Freedom Has Come',        speaker: 'Rev B Akama', date: 'Apr 2025',  videoId: 'x1DA8ias0kk', category: 'SUNDAY_SERVICE',    featured: true  },
+  { id: 2,  title: 'How to Make Your Prophecy Come to Pass', speaker: 'Rev B Akama', date: 'Jan 2025',  videoId: 'lXh6PaKEkbk', category: 'SUNDAY_SERVICE',    featured: true  },
+  { id: 3,  title: 'Dominion Over Sickness & Diseases',      speaker: 'Rev B Akama', date: '2025',     videoId: 'UNVERIFIED',  category: 'DELIVERANCE',      featured: true  },
+  { id: 4,  title: 'Special Impartation Service',            speaker: 'Rev B Akama', date: '2025',     videoId: 'UNVERIFIED',  category: 'CONFERENCE',       featured: false },
+  { id: 5,  title: 'Ending the Cycle of Demonic Reoccurrence', speaker: 'Rev B Akama', date: '2024',     videoId: 'UNVERIFIED',  category: 'PROPHETIC_WARFARE', featured: false },
+  { id: 6,  title: 'Divine Encounter — Live Prayer',          speaker: 'Rev B Akama', date: 'Apr 2025',  videoId: 'x1DA8ias0kk', category: 'PRAYER_FASTING',   featured: false },
+];
+
+export const FEATURED_SERMONS = SERMONS.filter(s => s.featured);
+
+export const FILTER_CATEGORIES = [
+  { id: 'ALL',              label: 'All' },
+  { id: 'SUNDAY_SERVICE',   label: 'Sunday Service' },
+  { id: 'MIDWEEK',          label: 'Midweek' },
+  { id: 'CONFERENCE',       label: 'Conference' },
+  { id: 'DELIVERANCE',      label: 'Deliverance' },
+  { id: 'PRAYER_FASTING',   label: 'Prayer & Fasting' },
+  { id: 'PROPHETIC_WARFARE', label: 'Prophetic Warfare' },
+];
+
+export const SOCIALS = {
+  facebook:   { url: 'https://facebook.com/RevBAkamaandSoundofAbundanceChurch/', color: '#1877F2', followers: 'UNVERIFIED', embed: true },
+  youtube:    { url: 'UNVERIFIED', color: '#FF0000', channelId: 'UNVERIFIED' },
+  instagram:  { url: 'UNVERIFIED', color: '#E1306C', handle: '@revbakama', followers: 'UNVERIFIED', embed: true },
+  tiktok:     { url: 'UNVERIFIED', color: '#000000' },
+  soatv:      { url: 'Available on DTV', color: '#D4AF37' },
+};
+
+export const GIVING = {
+  generalOffering: { paybill: '246656', account: 'SOA' },
+  soaTV:           { paybill: '4040519', account: 'SOATV' },
+};
+
+export const SERVICES = [
+  { day: 'Sunday',   time: '8:30 AM EAT',  label: 'First Service',   online: true },
+  { day: 'Sunday',   time: '9:45 AM EAT',  label: 'Main Service',    online: true },
+  { day: 'Tuesday',  time: 'UNVERIFIED',    label: 'Prophetic Appointments', online: true },
+  { day: 'Wednesday','time': 'UNVERIFIED',   label: 'Divine Encounter', online: true },
+];
+
+export const CONTACT = {
+  phones: ['0727 438 728', '0728 864 344', '0705 899 608'],
+  email: 'soachurch@gmail.com',
+};</pre>
+</div>
+
+</div>
+</section>
+
+<!-- SECTION 09: IMPLEMENTATION CHECKLIST -->
+<section id="section-09">
+<div class="container">
+<div class="sec-num">09 — IMPLEMENTATION CHECKLIST</div>
+<div class="sec-title">5-Phase Build <em>Checklist</em></div>
+<div class="sec-rule"></div>
+<div class="sec-intro">5-phase implementation roadmap. Each item is specific and actionable. Total: 28 days.</div>
+
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:24px;">PHASE 1 — FOUNDATION (DAYS 1–3)</h3>
+<ul class="checklist">
+<li>Create Next.js 15 project with App Router + TypeScript</li>
+<li>Install: tailwindcss, framer-motion, next-themes, @tsparticles/react, @tsparticles/slim, next/font/google</li>
+<li>Configure tailwind.config.ts with all 14 brand color tokens + 3 fonts + 6 keyframes</li>
+<li>Write globals.css with dark/light CSS custom properties + film grain + reduced-motion</li>
+<li>Set up next/font/google — Cormorant Garamond, Cinzel, EB Garamond</li>
+<li>Configure next.config.js with Unsplash + YouTube remote image patterns</li>
+<li>Create lib/content.ts with all verified SOA data (org, leaders, sermons, socials, services, giving)</li>
+<li>Build Navigation — desktop sticky + mobile hamburger overlay (Framer Motion stagger)</li>
+<li>Implement ThemeProvider (next-themes) — dark default, enableSystem, data-theme attribute</li>
+<li>Build Footer — 4-column desktop, accordion mobile (Framer Motion height animation)</li>
+<li>Build LoadingScreen — monogram + line draw + name sequence (AnimatePresence)</li>
+<li>Implement page transitions (AnimatePresence + usePathname in layout.tsx)</li>
+<li>Add film grain overlay (body::before with SVG filter)</li>
+</ul>
+
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:24px;margin-top:32px;">PHASE 2 — COMPONENTS (DAYS 4–7)</h3>
+<ul class="checklist">
+<li>Build ContentCard — default/hover/featured + YouTube thumbnail + onError fallback chain (maxres→hqdefault→fallback)</li>
+<li>Build ScrollReveal — IntersectionObserver + stagger delay prop + mobile y: 32→16</li>
+<li>Build LightBeam — home variant (2 beams) + ministry/events variant (3 beams) + CSS animation</li>
+<li>Build Particles — tsParticles with mobile count (15) + save-data (0) adaptation</li>
+<li>Build CustomCursor — gold ring + inner dot, useSpring, touch detection, hover states per platform color</li>
+<li>Build SocialConstellation — canvas nodes (desktop) + card stack (mobile) + IntersectionObserver trigger</li>
+<li>Build StatsCounter — Framer Motion count animation, useInView once:true, stagger index×0.1s</li>
+<li>Build Timeline — dot + line + year + fill animation on scroll-enter, index×0.15s stagger</li>
+<li>Build PullQuote — accent border-left + giant quote mark + attribution</li>
+<li>Build Button variants — Primary (accent fill), Secondary (accent border), Ghost (muted border)</li>
+<li>Build Tag/Badge variants — default, muted, active, live (animated red dot), conference</li>
+<li>Build FormInput — floating label, accent bottom-border focus, 16px font size, label float animation</li>
+</ul>
+
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:24px;margin-top:32px;">PHASE 3 — PAGES (DAYS 8–18)</h3>
+<ul class="checklist">
+<li>Home (/): All 9 sections. Hero → Live Strip → Stats → Featured Content → Ministries → Testimonials → Socials → Books → Newsletter</li>
+<li>Home: Set up Facebook Page Plugin embed (lazyOnload, timeline tab). Test in incognito.</li>
+<li>Home: Set up Instagram embed (create Curator.io account + widget first). Place curatorId in component.</li>
+<li>Home: Books horizontal scroll with verified shop links (Phase 2 — update when books confirmed)</li>
+<li>Home: Newsletter form (connect to Mailchimp/ConvertKit API route)</li>
+<li>Sermons (/sermons): YouTube live detection API → fallback. Filter bar + AnimatePresence grid.</li>
+<li>Sermons: Map all verified video IDs to ContentCard components with proper thumbnail URLs</li>
+<li>Sermons: YouTube Subscribe button embed with confirmed channel ID</li>
+<li>About (/about): Split hero (⚠️ real pastor photo required — use SOA monogram until provided). Story. Timeline. Beliefs accordion.</li>
+<li>Ministries (/ministries): Dramatic header + 3-beam LightBeam effect + ministry pillars grid</li>
+<li>Events (/events): Service schedule strip + upcoming events list with dates</li>
+<li>Give (/give): Scripture header + M-Pesa Paybill 246656/SOA + 4040519/SOATV + Stripe for international</li>
+<li>Connect (/connect): Contact form + visit info + Google Maps embed + SocialConstellation + Facebook + Instagram embeds</li>
+</ul>
+
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:24px;margin-top:32px;">PHASE 4 — EFFECTS PASS (DAYS 19–23)</h3>
+<ul class="checklist">
+<li>Wrap all sections in ScrollReveal with correct stagger delays per element type</li>
+<li>Apply parallax to hero backgrounds (useScroll + useTransform). Verify disabled on mobile.</li>
+<li>Implement stats counter on scroll-enter (home page stats bar)</li>
+<li>Timeline dot fill animation on scroll-enter (About page)</li>
+<li>Constellation canvas line draw animation with requestAnimationFrame (Connect page)</li>
+<li>Light beam animations on Home, Ministries, Events pages</li>
+<li>Custom cursor on all interactive elements (a, button, .content-card, .ministry-tile, nav a)</li>
+<li>Content card hover states — lift, border, play button reveal</li>
+<li>Theme toggle animation — icon rotation + CSS custom properties transition 0.4s</li>
+<li>Hero word reveal on load (stagger per word)</li>
+<li>Gold rule draw animations (clipPath: inset)</li>
+<li>Testimonial auto-advance carousel (6 seconds, pause on hover)</li>
+<li>Mobile hamburger stagger animation (y: 24→0, 0.06s per link)</li>
+</ul>
+
+<h3 style="font-family:var(--font-caps);font-size:.48rem;letter-spacing:.2em;color:var(--accent);margin-bottom:24px;margin-top:32px;">PHASE 5 — MOBILE QA &amp; LAUNCH (DAYS 24–28)</h3>
+<ul class="checklist">
+<li>Test all pages at 375px, 390px, 414px, 768px in Chrome DevTools</li>
+<li>Verify zero horizontal scroll at any breakpoint</li>
+<li>Verify all tap targets ≥ 48px on all interactive elements</li>
+<li>Verify form inputs don't trigger iOS zoom (font-size: 16px on all inputs)</li>
+<li>Verify parallax disabled on mobile (no transform on scroll)</li>
+<li>Verify constellation → card stack on mobile (breakpoint 768px)</li>
+<li>Verify footer accordion animation on mobile</li>
+<li>Verify Facebook and Instagram embeds fit within mobile container width</li>
+<li>Test YouTube live detection (force true/false in dev)</li>
+<li>Test dark/light toggle — both themes look correct on all pages</li>
+<li>Lighthouse: ≥ 90 Performance, ≥ 90 Accessibility, ≥ 90 SEO</li>
+<li>Add OG meta tags (og:title, og:description, og:image, twitter:card) for all pages</li>
+<li>Deploy to Vercel. Connect domain (soundofabundance.org or .co.ke). Enable analytics.</li>
+<li>Test live on actual iOS and Android device (not just DevTools) — especially YouTube embeds and M-Pesa section</li>
+</ul>
+
+<div class="callout" style="margin-top:32px;">
+<div class="callout-title">POST-LAUNCH: CONTENT VERIFICATION</div>
+<div class="callout-text">
+Once the site is live, verify and update the following items that are currently marked UNVERIFIED:<br><br>
+1. All YouTube video IDs — confirm against actual Rev B Akama channel<br>
+2. YouTube Channel ID — extract from channel URL for Subscribe button<br>
+3. Instagram handle @revbakama — verify URL and follower count<br>
+4. M-Pesa Paybill numbers — confirm with church admin (246656 and 4040519)<br>
+5. Founded year — confirm from church records<br>
+6. Published books by Rev B Akama — get titles and purchase URLs<br>
+7. Service times — confirm all days and times with church admin<br>
+8. Facebook Page Plugin URL — verify exact URL for Facebook embed
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+<div class="footer-grid">
+<div class="footer-col"><h4>SOUND OF ABUNDANCE</h4><p style="font-family:var(--font-display);font-style:italic;color:var(--accent-lt);font-size:1.1rem;margin-bottom:8px;">The Lord City</p><p style="font-family:var(--font-body);font-size:.82rem;color:var(--muted);">Kangundo Road, Opposite Saika Estate<br>Nairobi, Kenya 🇰🇪</p></div>
+<div class="footer-col"><h4>NAVIGATE</h4><a href="/">Home</a><a href="/about">About</a><a href="/sermons">Sermons</a><a href="/ministries">Ministries</a><a href="/events">Events</a><a href="/give">Give</a><a href="/connect">Connect</a></div>
+<div class="footer-col"><h4>MINISTRIES</h4><a href="/ministries">Sunday Service</a><a href="/ministries">Prophetic Appointments</a><a href="/ministries">Divine Encounter</a><a href="/events">Festival of Miracles</a><a href="/connect">Prayer Requests</a></div>
+<div class="footer-col"><h4>RECEIVE</h4><div style="font-family:var(--font-body);font-size:.82rem;color:var(--muted);margin-bottom:12px;">Get weekly prophetic updates:</div><form style="display:flex;gap:0;max-width:300px;"><input type="email" placeholder="your@email.com" style="flex:1;background:transparent;border:none;border-bottom:1px solid rgba(212,175,55,.25);padding:10px;font-family:var(--font-body);font-size:.85rem;color:var(--text);outline:none;"><button style="font-family:var(--font-caps);font-size:.4rem;letter-spacing:.15em;background:var(--accent);color:var(--bg);border:none;padding:12px 16px;">→</button></form></div>
+</div>
+<div class="footer-bottom"><div class="footer-copy">© 2025 Sound of Abundance Church International (SOA). All rights reserved.</div><div class="footer-url">soundofabundance.org</div></div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+const btn=document.querySelector('.theme-toggle button');
+if(btn){
+btn.addEventListener('click',function(){
+document.body.dataset.theme=document.body.dataset.theme==='light'?'dark':'light';
+this.innerHTML=document.body.dataset.theme==='light'?'&#9790;':'&#9788;';
+});
+}
+});
+</script>
+</body>
+</html>

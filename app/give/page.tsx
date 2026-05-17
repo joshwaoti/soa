@@ -4,7 +4,7 @@ import { giving, heroImages } from "../../lib/content";
 export default function GivePage() {
   return (
     <>
-      <Hero eyebrow="Kingdom Business" title={<>Give and <em>partner</em>.</>} copy="The PRD requires M-Pesa to be prominent for this Kenyan ministry. Please confirm Paybill details with church administration before financial launch." image={heroImages.prophecy} primary={{ label: "See Paybills", href: "#mpesa" }} />
+      <Hero eyebrow="Kingdom Business" title={<>Give and <em>partner</em>.</>} copy="Partner with the work of The Lord City through ministry support and SOA TV broadcast giving." image={heroImages.prophecy} portraitImage={heroImages.worshipClose} imagePosition="center 8%" portraitPosition="center 18%" primary={{ label: "See Paybills", href: "#mpesa" }} />
       <section className="section" id="mpesa">
         <div className="container">
           <span className="eyebrow">M-Pesa giving</span><h2 className="section-title">Clear routes for offering and SOA TV support.</h2><div className="rule" />

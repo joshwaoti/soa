@@ -6,6 +6,7 @@ import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, ExternalLink, Play, Search } from "lucide-react";
 import { sermons, socials } from "../lib/content";
+import { SocialIcon } from "./social-icon";
 
 export function ScrollReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   return (
@@ -25,13 +26,14 @@ export function LightBeams({ count = 2 }: { count?: number }) {
   );
 }
 
-export function Hero({ eyebrow, title, copy, image, primary, secondary }: {
-  eyebrow: string; title: React.ReactNode; copy: string; image: string; primary: { label: string; href: string }; secondary?: { label: string; href: string };
+export function Hero({ eyebrow, title, copy, image, portraitImage, imagePosition = "center 22%", portraitPosition = "center 18%", primary, secondary }: {
+  eyebrow: string; title: React.ReactNode; copy: string; image: string; portraitImage?: string; imagePosition?: string; portraitPosition?: string; primary: { label: string; href: string }; secondary?: { label: string; href: string };
 }) {
+  const portrait = portraitImage || image;
   return (
     <section className="hero">
       <LightBeams count={2} />
-      <div className="hero-bg"><Image src={image} alt="" fill priority sizes="100vw" /></div>
+      <div className="hero-bg"><Image src={image} alt="" fill priority sizes="100vw" style={{ objectPosition: imagePosition }} /></div>
       <div className="container hero-inner">
         <ScrollReveal>
           <div className="eyebrow">{eyebrow}</div>
@@ -44,7 +46,9 @@ export function Hero({ eyebrow, title, copy, image, primary, secondary }: {
           </div>
         </ScrollReveal>
         <ScrollReveal delay={0.15}>
-          <div className="monogram">SOA</div>
+          <div className="hero-portrait">
+            <Image src={portrait} alt={`${eyebrow} ministry image`} fill priority sizes="(max-width: 980px) 0px, 360px" style={{ objectPosition: portraitPosition }} />
+          </div>
         </ScrollReveal>
       </div>
     </section>
@@ -52,20 +56,20 @@ export function Hero({ eyebrow, title, copy, image, primary, secondary }: {
 }
 
 export function SermonCard({ sermon, featured = false }: { sermon: (typeof sermons)[number]; featured?: boolean }) {
-  const [src, setSrc] = useState(`https://img.youtube.com/vi/${sermon.videoId}/maxresdefault.jpg`);
+  const [src, setSrc] = useState(sermon.image || `https://img.youtube.com/vi/${sermon.videoId}/maxresdefault.jpg`);
   const fallback = `https://img.youtube.com/vi/${sermon.videoId}/hqdefault.jpg`;
   const href = `https://youtube.com/watch?v=${sermon.videoId}`;
   return (
     <a className={`sermon-card ${featured ? "featured" : ""}`} href={href} target="_blank" rel="noreferrer">
       <div className="thumb">
-        <Image src={src} alt={`${sermon.title} sermon thumbnail`} fill sizes="(max-width: 760px) 100vw, 33vw" onError={() => setSrc(fallback)} />
+        <Image src={src} alt={`${sermon.title} ministry image`} fill sizes="(max-width: 760px) 100vw, 33vw" style={{ objectPosition: sermon.position || "center 18%" }} onError={() => setSrc(fallback)} />
         <span className="play"><Play size={20} fill="currentColor" /></span>
         {featured && <span className="featured-tag">Featured</span>}
       </div>
       <div className="sermon-body">
         <span className="tag">{sermon.category}</span>
         <h3>{sermon.title}</h3>
-        <p>{sermon.speaker} · {sermon.date}</p>
+        <p>{sermon.speaker} - {sermon.date}</p>
       </div>
     </a>
   );
@@ -104,13 +108,13 @@ export function SocialEmbeds() {
       <div className="embed-card">
         <h3>Instagram Feed</h3>
         <div className="insta-fallback">
-          {socials.filter(s => s.name === "Instagram" || s.name === "YouTube" || s.name === "Facebook").map(({ name, handle, url, color, mark }) => (
+          {socials.filter(s => s.name === "Instagram" || s.name === "YouTube" || s.name === "Facebook").map(({ name, handle, url, color }) => (
             <a key={name} href={url} target="_blank" rel="noreferrer" style={{ "--social": color } as React.CSSProperties}>
-              <b>{mark}</b><span>{name}</span><small>{handle}</small><ExternalLink size={14} />
+              <b><SocialIcon name={name} /></b><span>{name}</span><small>{handle}</small><ExternalLink size={14} />
             </a>
           ))}
         </div>
-        <p className="source-note">Curator.io widget placeholder per PRD; source handle is @revbakama. The live widget ID must be added by the church admin account.</p>
+        <p className="source-note">Live social path: follow @revbakama on Instagram and the Facebook page for current photos, announcements, and service clips.</p>
       </div>
     </div>
   );

@@ -7,6 +7,8 @@ import { Menu, Moon, Sun, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ministries, ORG, routeMeta, socials } from "../lib/content";
+import { PageLoader } from "./page-loader";
+import { SocialIcon } from "./social-icon";
 
 function ThemeButton() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -49,7 +51,7 @@ function Nav() {
               </motion.div>
             ))}
             <div className="mobile-socials">
-              {socials.slice(0, 3).map(({ name, url, mark }) => <a key={name} href={url} target="_blank" rel="noreferrer" aria-label={name}>{mark}</a>)}
+              {socials.slice(0, 3).map(({ name, url }) => <a key={name} href={url} target="_blank" rel="noreferrer" aria-label={name}><SocialIcon name={name} /></a>)}
             </div>
           </motion.div>
         )}
@@ -95,6 +97,7 @@ function Footer() {
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem>
+      <PageLoader />
       <Nav />
       <main>{children}</main>
       <Footer />

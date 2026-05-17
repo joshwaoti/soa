@@ -1,7 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { Hero, SermonCard, SocialEmbeds, StatsRow, ScrollReveal } from "../components/soa";
-import { heroImages, ministries, ORG, sermons, testimonials } from "../lib/content";
+import { heroImages, ministries, ORG, resources, sermons, testimonials } from "../lib/content";
 
 export default function HomePage() {
   return (
@@ -11,6 +12,9 @@ export default function HomePage() {
         title={<>A home for <em>miracles</em>, deliverance, and abundance.</>}
         copy={ORG.vision}
         image={heroImages.worship}
+        portraitImage={heroImages.congregation}
+        imagePosition="center 16%"
+        portraitPosition="center 18%"
         primary={{ label: "Watch Live", href: "/sermons" }}
         secondary={{ label: "Plan a Visit", href: "/connect" }}
       />
@@ -39,7 +43,7 @@ export default function HomePage() {
           <h2 className="section-title">Six doors into the life of SOA.</h2>
           <div className="rule" />
           <div className="grid ministry-grid">
-            {ministries.map((item) => <article className="card ministry-card" key={item.name}><span className="num">{item.numeral}</span><h3>{item.name}</h3><p className="muted">{item.description}</p></article>)}
+            {ministries.map((item) => <article className="card ministry-card with-image" key={item.name}><div className="card-img"><Image src={item.image} alt={`${item.name} at Sound of Abundance`} fill sizes="(max-width: 760px) 100vw, 33vw" style={{ objectPosition: item.position }} /></div><span className="num">{item.numeral}</span><h3>{item.name}</h3><p className="muted">{item.description}</p></article>)}
           </div>
         </div>
       </section>
@@ -62,9 +66,16 @@ export default function HomePage() {
       <section className="section panel">
         <div className="container">
           <span className="eyebrow">Books and resources</span>
-          <h2 className="section-title">Resource shelf awaiting verified titles.</h2>
+          <h2 className="section-title">Teachings, broadcast resources, and church updates.</h2>
           <div className="rule" />
-          <div className="card"><p className="muted">The PRD marks Rev B Akama book titles and purchase URLs as unverified. This production surface keeps the section present without inventing publications.</p></div>
+          <div className="resource-grid">
+            {resources.map((item) => (
+              <article className="resource-card" key={item.title}>
+                <div className="resource-img"><Image src={item.image} alt={`${item.title} resource`} fill sizes="(max-width: 760px) 100vw, 25vw" style={{ objectPosition: item.position }} /></div>
+                <div><span className="tag">{item.type}</span><h3>{item.title}</h3><p className="muted">{item.description}</p></div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
       <section className="section">

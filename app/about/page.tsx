@@ -1,19 +1,20 @@
 import { Hero } from "../../components/soa";
-import { heroImages, ORG } from "../../lib/content";
+import Image from "next/image";
+import { heroImages, ORG, socialImages } from "../../lib/content";
 
 export default function AboutPage() {
   const timeline = [
-    ["2015+", "The PRD references a decade of ministry while keeping the exact founding year marked for confirmation."],
-    ["Broadcast era", "SOA TV and YouTube expand The Lord City from Kangundo Road into a broader media altar."],
+    ["Kangundo Road", "The Lord City gathers opposite Saika Estate, serving Nairobi's fast-growing Eastlands corridor."],
+    ["Broadcast era", "SOA TV, Facebook, Instagram, and YouTube expand the altar from Kangundo Road into a wider media ministry."],
     ["Today", "A prophetic, deliverance-focused community serves Nairobi Eastlands families through services, prayer, and counsel."]
   ];
   return (
     <>
-      <Hero eyebrow="About SOA" title={<>The story of <em>The Lord City</em>.</>} copy="Authority and history told as a journey of prophetic calling, rooted in Kangundo Road and Nairobi Eastlands." image={heroImages.leadership} primary={{ label: "Meet us Sunday", href: "/connect" }} />
+      <Hero eyebrow="About SOA" title={<>The story of <em>The Lord City</em>.</>} copy="Authority and history told as a journey of prophetic calling, rooted in Kangundo Road and Nairobi Eastlands." image={heroImages.congregation} portraitImage={heroImages.leadership} imagePosition="center 18%" portraitPosition="center 8%" primary={{ label: "Meet us Sunday", href: "/connect" }} />
       <section className="section">
         <div className="container beliefs">
-          <article className="card"><span className="eyebrow">Leadership</span><h2 className="section-title">Rev. B. Akama</h2><p className="muted">Senior pastor and general overseer of Sound of Abundance Church International. Public profiles describe him as the overseer of SOA in Nairobi, Kenya, located along Kangundo Road before Saika Stage.</p></article>
-          <article className="card"><span className="eyebrow">Mandate</span><h2 className="section-title">Miracles. Deliverance. Prophetic help.</h2><p className="muted">{ORG.vision}</p></article>
+          <article className="card profile-card"><div className="profile-img"><Image src={socialImages.leadership} alt="Rev B Akama from SOA social media" fill sizes="(max-width: 760px) 100vw, 50vw" style={{ objectPosition: "center 8%" }} /></div><span className="eyebrow">Leadership</span><h2 className="section-title">Rev. B. Akama</h2><p className="muted">Senior pastor and general overseer of Sound of Abundance Church International, leading a prophetic and deliverance-focused ministry from Kangundo Road, Nairobi.</p></article>
+          <article className="card profile-card"><div className="profile-img"><Image src={socialImages.fbCongregation} alt="Sound of Abundance congregation" fill sizes="(max-width: 760px) 100vw, 50vw" style={{ objectPosition: "center 18%" }} /></div><span className="eyebrow">Mandate</span><h2 className="section-title">Miracles. Deliverance. Prophetic help.</h2><p className="muted">{ORG.vision}</p></article>
         </div>
       </section>
       <section className="section panel">
@@ -24,7 +25,12 @@ export default function AboutPage() {
       </section>
       <section className="section">
         <div className="container beliefs">
-          {["God", "Jesus Christ", "The Holy Spirit", "The Bible"].map((belief) => <article className="card" key={belief}><span className="eyebrow">{belief}</span><p className="muted">Core belief content should be confirmed with church administration before publishing detailed doctrine; this keeps the PRD structure without inventing statements.</p></article>)}
+          {[
+            ["God", "SOA's ministry language centers on divine favor, Kingdom Business, and the God who brings deliverance."],
+            ["Jesus Christ", "The altar call of the church points people toward salvation, healing, and victory in Jesus' name."],
+            ["The Holy Spirit", "Prayer, prophecy, communion, and worship are presented as active works of the Spirit among the people."],
+            ["The Bible", "Services and online teachings draw from Scripture for prayer, prosperity, deliverance, and daily victory."]
+          ].map(([belief, text]) => <article className="card" key={belief}><span className="eyebrow">{belief}</span><p className="muted">{text}</p></article>)}
         </div>
       </section>
     </>

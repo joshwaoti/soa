@@ -3,7 +3,7 @@ import "./globals.css";
 import { SiteChrome } from "../components/site-chrome";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://soa.vercel.app"),
+  metadataBase: new URL("https://soa-chi.vercel.app"),
   title: {
     default: "Sound of Abundance Church International",
     template: "%s | Sound of Abundance Church"
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    url: "https://soa.vercel.app",
+    url: "https://soa-chi.vercel.app",
     siteName: "Sound of Abundance Church International",
     title: "Sound of Abundance Church International",
     description: "A digital extension of The Lord City on Kangundo Road, Nairobi.",

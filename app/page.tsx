@@ -12,9 +12,9 @@ export default function HomePage() {
         title={<>A home for <em>miracles</em>, deliverance, and abundance.</>}
         copy={ORG.vision}
         image={heroImages.worship}
-        portraitImage={heroImages.congregation}
+        portraitImage={heroImages.pastor}
         imagePosition="center 16%"
-        portraitPosition="center 18%"
+        portraitPosition="center 8%"
         primary={{ label: "Watch Live", href: "/sermons" }}
         secondary={{ label: "Plan a Visit", href: "/connect" }}
       />

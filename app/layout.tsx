@@ -3,12 +3,51 @@ import "./globals.css";
 import { SiteChrome } from "../components/site-chrome";
 
 export const metadata: Metadata = {
-  title: "Sound of Abundance Church International",
+  metadataBase: new URL("https://soa.vercel.app"),
+  title: {
+    default: "Sound of Abundance Church International",
+    template: "%s | Sound of Abundance Church"
+  },
   description: "The Lord City on Kangundo Road, Nairobi. Miracles, deliverance, prophecy, prayer, and Kingdom Business.",
+  applicationName: "Sound of Abundance Church International",
+  keywords: [
+    "Sound of Abundance Church",
+    "Rev B Akama",
+    "The Lord City",
+    "Kangundo Road church",
+    "Nairobi prophetic ministry",
+    "deliverance church Nairobi",
+    "SOA TV"
+  ],
+  alternates: {
+    canonical: "/"
+  },
   openGraph: {
+    type: "website",
+    url: "https://soa.vercel.app",
+    siteName: "Sound of Abundance Church International",
     title: "Sound of Abundance Church International",
     description: "A digital extension of The Lord City on Kangundo Road, Nairobi.",
-    images: ["https://img.youtube.com/vi/HVYM0NHFm9w/maxresdefault.jpg"]
+    images: [
+      {
+        url: "/images/social/hero-worship.jpg",
+        width: 2048,
+        height: 1365,
+        alt: "Sound of Abundance Church worship service"
+      },
+      {
+        url: "/images/social/ig-pastor-wide.jpg",
+        width: 1365,
+        height: 1365,
+        alt: "Rev B Akama of Sound of Abundance Church"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sound of Abundance Church International",
+    description: "The Lord City on Kangundo Road, Nairobi. Miracles, deliverance, prophecy, prayer, and Kingdom Business.",
+    images: ["/images/social/hero-worship.jpg"]
   }
 };
 
